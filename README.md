@@ -1,5 +1,5 @@
 # What's this?
-My old sci-fi Unity first person shooter. This codebase version of the project contains no textures. If you want to see what the ACTUAL game looks like, check the YouTube link here: https://www.youtube.com/watch?v=xoTc4aVz7z4
+My old tactical sci-fi first person shooter created in Unity. This codebase version of the project contains no textures. If you want to see what the ACTUAL game looks like, check the YouTube link here: https://www.youtube.com/watch?v=xoTc4aVz7z4
 
 # This isn't a Unity project. How can I play it?
 To avoid copyright issues, I removed all paid assets from the Unity Asset Store. Unfortunately, one of these assets controls the user interface. As you can tell, a game without a user interface can be quite difficult to use.
