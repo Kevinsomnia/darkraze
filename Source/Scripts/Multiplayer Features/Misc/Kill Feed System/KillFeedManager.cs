@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class KillFeedManager : MonoBehaviour {
+public class KillFeedManager : MonoBehaviour
+{
     [System.Serializable]
-    public class KillContainer {
-        public KillContainer(string klr, string vctm, int wepIndex) {
+    public class KillContainer
+    {
+        public KillContainer(string klr, string vctm, int wepIndex)
+        {
             killer = klr;
             victim = vctm;
             weaponIndex = wepIndex;
@@ -26,19 +29,24 @@ public class KillFeedManager : MonoBehaviour {
     [HideInInspector] public List<UILabel> feedList = new List<UILabel>();
     [HideInInspector] public List<KillContainer> feedQueue = new List<KillContainer>();
 
-    void OnDisable() {
+    void OnDisable()
+    {
         ClearAllItems();
     }
 
-    void Update() {
-        if(feedQueue.Count > 0 && feedList.Count < queueBuffer) {
+    void Update()
+    {
+        if (feedQueue.Count > 0 && feedList.Count < queueBuffer)
+        {
             AddToFeed(feedQueue[0].killer, feedQueue[0].victim, feedQueue[0].weaponIndex, true);
             feedQueue.RemoveAt(0);
         }
     }
 
-    public void AddToFeed(string killerName, string victimName, int weaponIndex, bool queued = false) {
-        if(feedList.Count >= queueBuffer) {
+    public void AddToFeed(string killerName, string victimName, int weaponIndex, bool queued = false)
+    {
+        if (feedList.Count >= queueBuffer)
+        {
             feedQueue.Add(new KillContainer(killerName, victimName, weaponIndex));
             return;
         }
@@ -48,11 +56,13 @@ public class KillFeedManager : MonoBehaviour {
         newFeedInstance.transform.localScale = Vector3.one;
         newFeedInstance.fontSize = fontSize;
 
-        if(weaponIndex >= 0) {
+        if (weaponIndex >= 0)
+        {
             string killedBy = (weaponIndex >= 200) ? GrenadeDatabase.GetGrenadeByID(weaponIndex - 200).grenadeName : WeaponDatabase.GetWeaponByID(weaponIndex).gunName;
             newFeedInstance.text = killerName + " [" + killedBy + "] " + victimName;
         }
-        else {
+        else
+        {
             newFeedInstance.text = killerName + " killed " + victimName;
         }
 
@@ -64,9 +74,12 @@ public class KillFeedManager : MonoBehaviour {
         feedList.Add(newFeedInstance);
     }
 
-    public void RebuildFeedList() {
-        for(int i = 0; i < feedList.Count; i++) {
-            if(feedList[i] == null) {
+    public void RebuildFeedList()
+    {
+        for (int i = 0; i < feedList.Count; i++)
+        {
+            if (feedList[i] == null)
+            {
                 continue;
             }
 
@@ -74,9 +87,12 @@ public class KillFeedManager : MonoBehaviour {
         }
     }
 
-    public void ClearAllItems() {
-        if(killFeedParent != null) {
-            for(int i = 0; i < killFeedParent.childCount; i++) {
+    public void ClearAllItems()
+    {
+        if (killFeedParent != null)
+        {
+            for (int i = 0; i < killFeedParent.childCount; i++)
+            {
                 Destroy(killFeedParent.GetChild(i).gameObject);
             }
         }

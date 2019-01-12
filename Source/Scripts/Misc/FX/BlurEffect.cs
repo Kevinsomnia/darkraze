@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-public class BlurEffect : MonoBehaviour {
+public class BlurEffect : MonoBehaviour
+{
     public int iterations = 3;
     public float blurSpread = 0.6f;
     public float qualityReduction = 1f;
@@ -20,9 +21,12 @@ public class BlurEffect : MonoBehaviour {
     private float blurEffects;
 
     private Material mat;
-    private Material material {
-        get {
-            if(mat == null) {
+    private Material material
+    {
+        get
+        {
+            if (mat == null)
+            {
                 mat = new Material(blurShader);
                 mat.hideFlags = HideFlags.DontSave;
             }
@@ -30,25 +34,31 @@ public class BlurEffect : MonoBehaviour {
         }
     }
 
-    void OnDisable() {
-        if(mat) {
+    void OnDisable()
+    {
+        if (mat)
+        {
             DestroyImmediate(mat);
         }
     }
 
-    void Start() {
-        if(!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures) {
+    void Start()
+    {
+        if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
+        {
             enabled = false;
             return;
         }
 
-        if(!blurShader || !material.shader.isSupported) {
+        if (!blurShader || !material.shader.isSupported)
+        {
             enabled = false;
             return;
         }
     }
 
-    private void FourTapCone(RenderTexture source, RenderTexture dest, int iteration) {
+    private void FourTapCone(RenderTexture source, RenderTexture dest, int iteration)
+    {
         float offset = iteration * (blurSpread + joiningServerBlur);
         Graphics.BlitMultiTap(source, dest, material,
             new Vector2(-offset * xMod, -offset * yMod),
@@ -58,7 +68,8 @@ public class BlurEffect : MonoBehaviour {
         );
     }
 
-    private void DownSample4x(RenderTexture source, RenderTexture dest, float blurFactor) {
+    private void DownSample4x(RenderTexture source, RenderTexture dest, float blurFactor)
+    {
         Graphics.BlitMultiTap(source, dest, material,
             new Vector2(-blurFactor, -blurFactor),
             new Vector2(-blurFactor, blurFactor),
@@ -67,17 +78,21 @@ public class BlurEffect : MonoBehaviour {
         );
     }
 
-    void Update() {
-        if(Application.isPlaying && (pauseEffect > 0f || leaderboardEffect > 0f)) {
+    void Update()
+    {
+        if (Application.isPlaying && (pauseEffect > 0f || leaderboardEffect > 0f))
+        {
             float pause = (GameManager.isPaused) ? pauseEffect : 0f;
             float leader = (GeneralVariables.uicIsActive) ? leaderboardEffect * GeneralVariables.uiController.mpGUI.leaderboard.alpha : 0f;
             blurEffects = Mathf.MoveTowards(blurEffects, pause + leader, Time.unscaledDeltaTime * 10f);
         }
     }
 
-    void OnRenderImage(RenderTexture source, RenderTexture destination) {
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         float blurFactor = Mathf.Clamp(blurSpread + blurEffects + joiningServerBlur, 0f, 2f);
-        if(blurFactor <= 0.001f) {
+        if (blurFactor <= 0.001f)
+        {
             Graphics.Blit(source, destination);
             return;
         }
@@ -95,7 +110,8 @@ public class BlurEffect : MonoBehaviour {
 
         DownSample4x(source, buffer, blurFactor);
 
-        for(int i = 0; i < iterations; i++) {
+        for (int i = 0; i < iterations; i++)
+        {
             RenderTexture buffer2 = RenderTexture.GetTemporary(rtW, rtH, 0);
             FourTapCone(buffer, buffer2, i);
             RenderTexture.ReleaseTemporary(buffer);

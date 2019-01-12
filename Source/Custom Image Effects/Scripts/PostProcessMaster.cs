@@ -3,8 +3,10 @@
 [ExecuteInEditMode]
 [ImageEffectAllowedInSceneView]
 [RequireComponent(typeof(Camera))]
-public class PostProcessMaster : MonoBehaviour {
-    public static class ShaderProps {
+public class PostProcessMaster : MonoBehaviour
+{
+    public static class ShaderProps
+    {
         public static readonly int _BrightnessShift = Shader.PropertyToID("_BrightnessShift");
         public static readonly int _CCParams = Shader.PropertyToID("_CCParams");
         public static readonly int _ChromaticAberration = Shader.PropertyToID("_ChromaticAberration");
@@ -22,7 +24,7 @@ public class PostProcessMaster : MonoBehaviour {
     public enum ColorBlindType { None, Protanopia, Deuteranopia, Tritanopia };
 
     public Shader shader;
-    
+
     public bool vignetting = false;
     public float vignetteIntensity = 1.5f;
     public float vignetteSmoothness = 2f;
@@ -44,55 +46,67 @@ public class PostProcessMaster : MonoBehaviour {
     private Material mat;
     private bool referencedPlayer;
 
-    private void OnEnable() {
-        if(shader == null || !shader.isSupported) {
+    private void OnEnable()
+    {
+        if (shader == null || !shader.isSupported)
+        {
             enabled = false;
             return;
         }
-        
+
         mat = new Material(shader);
         mat.hideFlags = HideFlags.HideAndDontSave;
     }
 
-    private void OnDisable() {
-        if(mat != null) {
+    private void OnDisable()
+    {
+        if (mat != null)
+        {
             DestroyImmediate(mat);
             mat = null;
         }
     }
-    
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
+
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         int rtW = source.width;
         int rtH = source.height;
-        
-        if(vignetting) {
+
+        if (vignetting)
+        {
             mat.EnableKeyword("VIGNETTING_ON");
             mat.SetFloat(ShaderProps._VignetteIntensity, Mathf.Max(0f, vignetteIntensity));
             mat.SetFloat(ShaderProps._VignetteSmoothness, Mathf.Max(0f, vignetteSmoothness));
 
-            if(chromaticAberration > 0f) {
+            if (chromaticAberration > 0f)
+            {
                 mat.EnableKeyword("CHROMATIC_ABERRATION_ON");
                 mat.SetFloat(ShaderProps._ChromaticAberration, chromaticAberration);
             }
-            else {
+            else
+            {
                 mat.DisableKeyword("CHROMATIC_ABERRATION_ON");
             }
         }
-        else {
+        else
+        {
             mat.DisableKeyword("VIGNETTING_ON");
         }
 
-        if(tonemapping) {
+        if (tonemapping)
+        {
             mat.EnableKeyword("TONEMAPPING_ON");
             mat.SetFloat(ShaderProps._Exposure, Mathf.Max(0.001f, exposure));
         }
-        else {
+        else
+        {
             mat.DisableKeyword("TONEMAPPING_ON");
         }
 
-        if(colorCorrection && SystemInfo.supports3DTextures && colorCorrectionLUT != null) {
+        if (colorCorrection && SystemInfo.supports3DTextures && colorCorrectionLUT != null)
+        {
             mat.EnableKeyword("LUT_CC_ON");
-            
+
             int lutWidth = colorCorrectionLUT.width;
             colorCorrectionLUT.wrapMode = TextureWrapMode.Clamp;
 
@@ -100,11 +114,12 @@ public class PostProcessMaster : MonoBehaviour {
             mat.SetVector(ShaderProps._CCParams, new Vector3((lutWidth - 1) / (float)lutWidth, 1f / (lutWidth * 2f)));
             mat.SetTexture(ShaderProps._LutTex, colorCorrectionLUT);
         }
-        else {
+        else
+        {
             mat.DisableKeyword("LUT_CC_ON");
             mat.SetTexture(ShaderProps._LutTex, null);
         }
-        
+
         mat.SetVector(ShaderProps._ColorTint, new Vector4(colorTint.x, colorTint.y, colorTint.z, saturation));
         mat.SetVector(ShaderProps._Temperature, CalculateTemperature());
         mat.SetFloat(ShaderProps._BrightnessShift, brightnessShift);
@@ -114,19 +129,23 @@ public class PostProcessMaster : MonoBehaviour {
         Graphics.Blit(source, destination, mat);
     }
 
-    public static bool DimensionsAreValidLUT(Texture2D lut) {
-        if(lut != null && lut.height == (int)Mathf.Sqrt(lut.width)) {
+    public static bool DimensionsAreValidLUT(Texture2D lut)
+    {
+        if (lut != null && lut.height == (int)Mathf.Sqrt(lut.width))
+        {
             return true;
         }
 
         return false;
     }
 
-    private float StandardIlluminantY(float x) {
+    private float StandardIlluminantY(float x)
+    {
         return (2.87f * x) - (3f * x * x) - 0.275095f;
     }
 
-    private Vector3 CIEtoLMS(float x, float y) {
+    private Vector3 CIEtoLMS(float x, float y)
+    {
         float X = x / y;
         float Y = (1.0f - x - y) / y;
 
@@ -137,8 +156,9 @@ public class PostProcessMaster : MonoBehaviour {
         return new Vector3(L, M, S);
     }
 
-    private Vector3 CalculateTemperature() {
-        if(Mathf.Abs(colorTemp) < 0.001f)
+    private Vector3 CalculateTemperature()
+    {
+        if (Mathf.Abs(colorTemp) < 0.001f)
             return Vector3.one;
 
         float x = 0.31271f - (colorTemp * 0.075f);

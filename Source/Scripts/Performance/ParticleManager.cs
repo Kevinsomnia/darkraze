@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ParticleManager : MonoBehaviour {
+public class ParticleManager : MonoBehaviour
+{
     public bool playSound = false;
     public AudioClip[] randomClips;
 
@@ -11,39 +12,48 @@ public class ParticleManager : MonoBehaviour {
 
     private RandomPitch rp;
 
-	void Awake() {
-	    Initialize();
-	}
+    void Awake()
+    {
+        Initialize();
+    }
 
-    public void Initialize() {
+    public void Initialize()
+    {
         cachedTransform = transform;
 
-        if(playSound) {
+        if (playSound)
+        {
             rp = GetComponent<RandomPitch>();
         }
     }
-	
-	public void EmitAll() {
-        if(inUse) {
+
+    public void EmitAll()
+    {
+        if (inUse)
+        {
             return;
         }
 
         inUse = true;
-        if(playSound) {
+        if (playSound)
+        {
             GetComponent<AudioSource>().clip = randomClips[Random.Range(0, randomClips.Length)];
 
-            if(rp) {
+            if (rp)
+            {
                 rp.PlayAudio();
             }
-            else {
+            else
+            {
                 GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
             }
         }
 
-	    foreach(ParticleEmitter pe in emitters) {
+        foreach (ParticleEmitter pe in emitters)
+        {
             pe.Emit();
         }
 
         inUse = false;
-	}
+    }
 }

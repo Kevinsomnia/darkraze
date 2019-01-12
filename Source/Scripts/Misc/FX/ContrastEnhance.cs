@@ -3,7 +3,8 @@ using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class ContrastEnhance : PostEffectsBaseC {
+public class ContrastEnhance : PostEffectsBaseC
+{
     public float intensity = 0.5f;
     public float threshold = 0f;
     public float blurSpread = 1f;
@@ -14,7 +15,8 @@ public class ContrastEnhance : PostEffectsBaseC {
     private Material contrastMaterial;
     private Material blurMaterial;
 
-    public override bool CheckResources() {
+    public override bool CheckResources()
+    {
         CheckSupport(false);
 
         contrastMaterial = CheckShaderAndCreateMaterial(contrastShader, contrastMaterial);
@@ -23,8 +25,10 @@ public class ContrastEnhance : PostEffectsBaseC {
         return isSupported;
     }
 
-    void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if(!CheckResources() || intensity <= 0f) {
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (!CheckResources() || intensity <= 0f)
+        {
             Graphics.Blit(source, destination);
             return;
         }

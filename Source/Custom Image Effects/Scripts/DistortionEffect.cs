@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DistortionEffect : MonoBehaviour {
+public class DistortionEffect : MonoBehaviour
+{
     public Shader distortionShader;
     public Texture2D distortTexture;
     public float baseIntensity = 0.5f;
@@ -20,9 +21,12 @@ public class DistortionEffect : MonoBehaviour {
     private float lastSplitTime;
 
     private Material cMaterial;
-    public Material curMaterial {
-        get {
-            if(cMaterial == null) {
+    public Material curMaterial
+    {
+        get
+        {
+            if (cMaterial == null)
+            {
                 cMaterial = new Material(distortionShader);
                 cMaterial.hideFlags = HideFlags.HideAndDontSave;
             }
@@ -31,8 +35,10 @@ public class DistortionEffect : MonoBehaviour {
         }
     }
 
-    void Awake() {
-        if(!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures) {
+    void Awake()
+    {
+        if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
+        {
             this.enabled = false;
             return;
         }
@@ -40,14 +46,18 @@ public class DistortionEffect : MonoBehaviour {
         lastUpdateTime = -(1f / updateFPS) * 2f;
     }
 
-    void OnDisable() {
-        if(curMaterial != null) {
+    void OnDisable()
+    {
+        if (curMaterial != null)
+        {
             DestroyImmediate(curMaterial);
         }
     }
 
-    void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if(distortionShader == null || baseIntensity <= 0f) {
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (distortionShader == null || baseIntensity <= 0f)
+        {
             Graphics.Blit(source, destination);
             return;
         }
@@ -55,18 +65,22 @@ public class DistortionEffect : MonoBehaviour {
         curMaterial.SetTexture("_DispTex", distortTexture);
         float updateInterval = 1f / updateFPS;
 
-        if(splitProbability > 0f) {
-            if(Time.time - lastSplitTime >= splitFrequency) {
+        if (splitProbability > 0f)
+        {
+            if (Time.time - lastSplitTime >= splitFrequency)
+            {
                 shouldSplit = (Random.value <= splitProbability);
                 curMaterial.SetFloat("_SplitPos", Random.Range(splitPos.x, splitPos.y));
                 lastSplitTime = Time.time;
             }
         }
-        else {
+        else
+        {
             shouldSplit = false;
         }
 
-        if(Time.time - lastUpdateTime >= updateInterval) {
+        if (Time.time - lastUpdateTime >= updateInterval)
+        {
             bool flip = (Random.value <= 0.5f);
             curMaterial.SetVector("_Offset", new Vector4(Random.value, Random.value, Random.Range(0f, splitOffset) * ((shouldSplit) ? 1f : 0f) * ((flip) ? -1f : 1f), Random.Range(0f, splitOffset) * ((shouldSplit) ? 1f : 0f) * ((flip) ? 1f : -1f)));
             curMaterial.SetFloat("_Scale", Random.Range(distortScale.x, distortScale.y));

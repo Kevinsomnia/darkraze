@@ -2,7 +2,8 @@
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class BlurUI : MonoBehaviour {
+public class BlurUI : MonoBehaviour
+{
     private const float HEIGHT_REFERENCE = 900f;
 
     [Range(1, 5)]
@@ -13,12 +14,14 @@ public class BlurUI : MonoBehaviour {
     public int blurIterations = 2;
 
     public Shader blurShader;
-    
+
     private Material mat;
     private int _BlurSize;
 
-    private void OnEnable() {
-        if(blurShader == null || !blurShader.isSupported) {
+    private void OnEnable()
+    {
+        if (blurShader == null || !blurShader.isSupported)
+        {
             enabled = false;
             return;
         }
@@ -29,16 +32,19 @@ public class BlurUI : MonoBehaviour {
         _BlurSize = Shader.PropertyToID("_BlurSize");
     }
 
-    private void OnDisable() {
-        if(mat != null)
+    private void OnDisable()
+    {
+        if (mat != null)
             DestroyImmediate(mat);
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
-		if(!CheckSupport()) {
-			enabled = false;
-			return;
-		}
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (!CheckSupport())
+        {
+            enabled = false;
+            return;
+        }
 
         float widthMod = 1f / (1 << downsample);
         widthMod *= Screen.height / HEIGHT_REFERENCE;
@@ -55,7 +61,8 @@ public class BlurUI : MonoBehaviour {
         Graphics.Blit(source, rt1, mat, 0);
         float iterSizeMod = 1.0f;
 
-        for(int i = 0; i < blurIterations; i++) {
+        for (int i = 0; i < blurIterations; i++)
+        {
             Graphics.Blit(rt1, rt2, mat, 1);
             Graphics.Blit(rt2, rt1, mat, 2);
 
@@ -70,8 +77,9 @@ public class BlurUI : MonoBehaviour {
 
         Graphics.Blit(source, destination);
     }
-    
-	private bool CheckSupport() {
-		return (SystemInfo.supportsImageEffects && mat != null);
-	}
+
+    private bool CheckSupport()
+    {
+        return (SystemInfo.supportsImageEffects && mat != null);
+    }
 }

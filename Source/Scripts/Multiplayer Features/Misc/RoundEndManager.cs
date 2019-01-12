@@ -3,7 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RoundEndManager : MonoBehaviour {
+public class RoundEndManager : MonoBehaviour
+{
     public static bool isRoundEnded = false;
 
     public Transform panelRoot;
@@ -64,7 +65,8 @@ public class RoundEndManager : MonoBehaviour {
     private string neutralCol = "[FFFFFF]";
     private string greenCol = "[7CCE3B]";
 
-    void Awake() {
+    void Awake()
+    {
         countToNextRound = 10;
         vignetting.intensity = 0f;
         blackStuff.alpha = 0f;
@@ -73,7 +75,8 @@ public class RoundEndManager : MonoBehaviour {
 
         sortedPlayers = new List<NetPlayerInfo>();
 
-        for(int i = 0; i < Topan.Network.connectedPlayers.Length; i++) {
+        for (int i = 0; i < Topan.Network.connectedPlayers.Length; i++)
+        {
             Topan.NetworkPlayer curPlayer = Topan.Network.connectedPlayers[i];
 
             NetPlayerInfo npi = new NetPlayerInfo();
@@ -85,7 +88,8 @@ public class RoundEndManager : MonoBehaviour {
             sortedPlayers.Add(npi);
         }
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             teamBasedRoot.SetActive(true);
             Destroy(individualBasedRoot);
 
@@ -93,7 +97,8 @@ public class RoundEndManager : MonoBehaviour {
             int blueIndex = 0;
 
             sortedPlayers = new List<NetPlayerInfo>();
-            for(int i = 0; i < Topan.Network.connectedPlayers.Length; i++) {
+            for (int i = 0; i < Topan.Network.connectedPlayers.Length; i++)
+            {
                 Topan.NetworkPlayer curPlayer = Topan.Network.connectedPlayers[i];
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -106,7 +111,8 @@ public class RoundEndManager : MonoBehaviour {
             }
 
             BotPlayer[] redBots = NetworkingGeneral.GetBotParticipants(0);
-            for(int i = 0; i < redBots.Length; i++) {
+            for (int i = 0; i < redBots.Length; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(redBots[i].index);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -119,7 +125,8 @@ public class RoundEndManager : MonoBehaviour {
             }
 
             BotPlayer[] blueBots = NetworkingGeneral.GetBotParticipants(1);
-            for(int i = 0; i < blueBots.Length; i++) {
+            for (int i = 0; i < blueBots.Length; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(blueBots[i].index);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -131,20 +138,25 @@ public class RoundEndManager : MonoBehaviour {
                 sortedPlayers.Add(npi);
             }
 
-            if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills) {
+            if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myKills.CompareTo(p1.myKills));
             }
-            else if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score) {
+            else if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myScore.CompareTo(p1.myScore));
             }
 
-            for(int i = 0; i < sortedPlayers.Count; i++) {
+            for (int i = 0; i < sortedPlayers.Count; i++)
+            {
                 NetPlayerInfo current = sortedPlayers[i];
-                if(current.botPlayer == null && current.realPlayer == null) {
+                if (current.botPlayer == null && current.realPlayer == null)
+                {
                     continue;
                 }
 
-                if(current.myInfo == null) {
+                if (current.myInfo == null)
+                {
                     continue;
                 }
 
@@ -154,7 +166,8 @@ public class RoundEndManager : MonoBehaviour {
                 float kd = (deaths > 0) ? ((float)kills / (float)deaths) : kills;
 
                 UserStatsGUI usg = null;
-                if(current.myTeam == 0) {
+                if (current.myTeam == 0)
+                {
                     UserStatsGUI instance = (UserStatsGUI)Instantiate(scoreboardPrefab);
                     instance.transform.parent = redStart;
                     instance.transform.localPosition = Vector3.down * (redIndex * statsSpacing);
@@ -162,7 +175,8 @@ public class RoundEndManager : MonoBehaviour {
                     usg = instance;
                     redIndex++;
                 }
-                else {
+                else
+                {
                     UserStatsGUI instance = (UserStatsGUI)Instantiate(scoreboardPrefab);
                     instance.transform.parent = blueStart;
                     instance.transform.localPosition = Vector3.down * (blueIndex * statsSpacing);
@@ -186,13 +200,15 @@ public class RoundEndManager : MonoBehaviour {
                     (thisListIndex % 2 == 0));
             }
         }
-        else {
+        else
+        {
             Destroy(teamBasedRoot);
             individualBasedRoot.SetActive(true);
 
             int currentIndex = 0;
 
-            for(int i = 0; i < BotManager.allBotPlayers.Length && i < GeneralVariables.Networking.botCount; i++) {
+            for (int i = 0; i < BotManager.allBotPlayers.Length && i < GeneralVariables.Networking.botCount; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(i);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -204,20 +220,25 @@ public class RoundEndManager : MonoBehaviour {
                 sortedPlayers.Add(npi);
             }
 
-            if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills) {
+            if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myKills.CompareTo(p1.myKills));
             }
-            else if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score) {
+            else if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myScore.CompareTo(p1.myScore));
             }
 
-            for(int i = 0; i < sortedPlayers.Count; i++) {
+            for (int i = 0; i < sortedPlayers.Count; i++)
+            {
                 NetPlayerInfo current = sortedPlayers[i];
-                if(current.botPlayer == null && current.realPlayer == null) {
+                if (current.botPlayer == null && current.realPlayer == null)
+                {
                     continue;
                 }
 
-                if(current.myInfo == null) {
+                if (current.myInfo == null)
+                {
                     continue;
                 }
 
@@ -226,7 +247,8 @@ public class RoundEndManager : MonoBehaviour {
                 int score = current.myScore;
                 float kd = (deaths > 0) ? ((float)kills / (float)deaths) : kills;
 
-                if(currentIndex >= 16) {
+                if (currentIndex >= 16)
+                {
                     continue;
                 }
 
@@ -251,14 +273,16 @@ public class RoundEndManager : MonoBehaviour {
             }
         }
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             roundLabel.cachedTrans.localPosition = new Vector3(0f, 245f, -7f);
             spectatorList.cachedTrans.localPosition = new Vector3(-395f, -316f, 0f);
             panelRoot.localPosition = Vector3.zero;
             statsBackground.SetDimensions(270, 530);
             statsOutline.SetDimensions(278, 540);
         }
-        else {
+        else
+        {
             roundLabel.cachedTrans.localPosition = new Vector3(0f, 225f, -7f);
             spectatorList.cachedTrans.localPosition = new Vector3(-395f, -261f, 0f);
             panelRoot.localPosition = Vector3.up * -20f;
@@ -288,29 +312,33 @@ public class RoundEndManager : MonoBehaviour {
         StartCoroutine(ProcessData());
     }
 
-    void Update() {
+    void Update()
+    {
         roundLimit = (byte)Topan.Network.GetServerInfo("rc");
         roundLabel.text = "ROUND " + curRoundDisplay.ToString() + ((roundLimit < 255) ? "/" + roundLimit.ToString() : "") + " ENDED";
         countdownLabel.text = ((curRoundDisplay == roundLimit) ? "RETURNING TO LOBBY IN: " : "NEXT ROUND STARTS IN: ") + countToNextRound.ToString();
     }
 
-    private IEnumerator StartProgressAnimation(float delay) {
+    private IEnumerator StartProgressAnimation(float delay)
+    {
         yield return new WaitForSeconds(delay);
 
         bool expDone = false;
 
         float accumExp = 0f;
         int expLeft = earnedExp;
-        while(!expDone) {
+        while (!expDone)
+        {
             int expToNextRank = AccountManager.GetTargetExperienceForRank(AccountManager.profileData.rank);
 
             int stepAmount = Mathf.Min(Mathf.RoundToInt(Time.deltaTime * animationSpeed * (1f - (Mathf.Clamp01(accumExp / earnedExp) * expSlowdownTime))), expLeft);
             currentExpValue += (float)stepAmount;
             expLeft -= stepAmount;
-            
+
             float roundedValue = Mathf.Round(currentExpValue);
 
-            if(roundedValue >= expToNextRank) {
+            if (roundedValue >= expToNextRank)
+            {
                 LevelUp();
             }
 
@@ -327,13 +355,15 @@ public class RoundEndManager : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         AccountManager.profileData.curXP = Mathf.RoundToInt(currentExpValue);
 
-        while(currencyLabel.alpha < 1f) {
+        while (currencyLabel.alpha < 1f)
+        {
             currencyLabel.alpha += Time.deltaTime * 5f;
             yield return null;
         }
 
         bool currencyDone = false;
-        while(!currencyDone) {
+        while (!currencyDone)
+        {
             currentCurrencyValue = Mathf.Lerp(currentCurrencyValue, earnedCurrency, Time.deltaTime * 2f);
             currencyLabel.text = "+[b]" + Mathf.Ceil(currentCurrencyValue).ToString() + "[/b] CREDITS";
 
@@ -349,7 +379,8 @@ public class RoundEndManager : MonoBehaviour {
         currencyLabel.GetComponent<TextTransition>().UpdateText("[b]" + AccountManager.profileData.currency.ToString() + "[/b] CREDITS");
     }
 
-    private void LevelUp() {
+    private void LevelUp()
+    {
         int deduction = AccountManager.GetTargetExperienceForRank(AccountManager.profileData.rank);
         currentExpValue -= deduction;
         AccountManager.profileData.rank++;
@@ -357,7 +388,8 @@ public class RoundEndManager : MonoBehaviour {
         nextRankLabel.text = "RANK " + (AccountManager.profileData.rank + 1).ToString() + " [ROOKIE]";
     }
 
-    private IEnumerator ProcessData() {
+    private IEnumerator ProcessData()
+    {
         WWWForm newForm = new WWWForm();
         newForm.AddField("id", AccountManager.databaseID);
         newForm.AddField("e", earnedExp);
@@ -372,34 +404,41 @@ public class RoundEndManager : MonoBehaviour {
         yield return updateData;
     }
 
-    public void TeamWinner(int team, int curRound) {
+    public void TeamWinner(int team, int curRound)
+    {
         winningTeam = team;
         curRoundDisplay = curRound;
         isRoundEnded = true;
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             byte yourTeam = (byte)Topan.Network.player.GetPlayerData("team");
 
-            if(team <= -1) {
+            if (team <= -1)
+            {
                 redTeamStatus.text = "[505050](DRAW)";
                 blueTeamStatus.text = "[505050](DRAW)";
             }
-            else {
+            else
+            {
                 redTeamStatus.text = (team == 0) ? "[6F9042](VICTORY)" : "[B92214](DEFEAT)";
                 blueTeamStatus.text = (team == 1) ? "[6F9042](VICTORY)" : "[B92214](DEFEAT)";
             }
 
-            if(team == yourTeam) {
+            if (team == yourTeam)
+            {
                 roundStatusLabel.text = "VICTORY";
                 roundStatusLabel.color = victoryColor;
                 extraInfo.text = "YOUR TEAM HAS WON!";
             }
-            else if(team <= -1) {
+            else if (team <= -1)
+            {
                 roundStatusLabel.text = "DRAW";
                 roundStatusLabel.color = drawColor;
                 extraInfo.text = "YOUR TEAM HAS TIED!";
             }
-            else {
+            else
+            {
                 roundStatusLabel.text = "DEFEAT";
                 roundStatusLabel.color = defeatColor;
                 extraInfo.text = "YOUR TEAM HAS LOST!";
@@ -409,34 +448,41 @@ public class RoundEndManager : MonoBehaviour {
             byte bWins = (byte)Topan.Network.GetServerInfo("bVic");
 
             string rTextCol = neutralCol;
-            if(rWins > bWins) {
+            if (rWins > bWins)
+            {
                 rTextCol = greenCol;
             }
-            else if(rWins < bWins) {
+            else if (rWins < bWins)
+            {
                 rTextCol = redCol;
             }
 
             redWins.text = "[FFFFFF]-[-] " + rTextCol + rWins.ToString() + " WIN" + ((rWins == 1) ? "" : "S");
 
             string bTextCol = neutralCol;
-            if(bWins > rWins) {
+            if (bWins > rWins)
+            {
                 bTextCol = greenCol;
             }
-            else if(bWins < rWins) {
+            else if (bWins < rWins)
+            {
                 bTextCol = redCol;
             }
 
             blueWins.text = "[FFFFFF]-[-] " + bTextCol + bWins.ToString() + " WIN" + ((bWins == 1) ? "" : "S");
         }
-        else {
+        else
+        {
             string winnerName = (team >= 64) ? BotManager.allBotPlayers[team - 64].botInfo.username : ((CombatantInfo)Topan.Network.GetPlayerByID(team).GetInitialData("dat")).username;
 
-            if(team == Topan.Network.player.id) {
+            if (team == Topan.Network.player.id)
+            {
                 roundStatusLabel.text = "VICTORY";
                 roundStatusLabel.color = victoryColor;
                 extraInfo.text = "YOU HAVE DOMINATED!";
             }
-            else {
+            else
+            {
                 roundStatusLabel.text = "DEFEAT";
                 roundStatusLabel.color = defeatColor;
                 extraInfo.text = winnerName.ToUpper() + " WON THE MATCH!";
@@ -444,9 +490,10 @@ public class RoundEndManager : MonoBehaviour {
         }
 
         string builtText = "[b]MATCH STATISTICS[/b]";
-        builtText += "\n" + "\n"  + "Placeholder text" + "\n" + "Ran 2851 meters" + "\n" + "Fired 1522 bullets" + "\n" + "Best Weapon: NR-94";
+        builtText += "\n" + "\n" + "Placeholder text" + "\n" + "Ran 2851 meters" + "\n" + "Fired 1522 bullets" + "\n" + "Best Weapon: NR-94";
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             builtText += "\n" + "\n" + "RED TEAM" + "\n" + "\n";
             builtText += "Total Kills: 0" + "\n" + "Total Deaths: 0" + "\n" + "Total K/D: 0.00" + "\n" + "Total Score: 0" + "\n" + "-----------------" + "\n";
             builtText += "Team Captures: 0" + "\n" + "Bomb Plants: 0" + "\n" + "Bomb Defuses: 0";
@@ -455,7 +502,8 @@ public class RoundEndManager : MonoBehaviour {
             builtText += "Total Kills: 0" + "\n" + "Total Deaths: 0" + "\n" + "Total K/D: 0.00" + "\n" + "Total Score: 0" + "\n" + "-----------------" + "\n";
             builtText += "Team Captures: 0" + "\n" + "Bomb Plants: 0" + "\n" + "Bomb Defuses: 0";
         }
-        else {
+        else
+        {
             builtText += "\n" + "\n" + "Best Sharpshooter: DaBossTMR";
             builtText += "\n" + "Best Comedian: DaBossTMR";
             builtText += "\n" + "Everything Else: DaBossTMR";
@@ -466,7 +514,8 @@ public class RoundEndManager : MonoBehaviour {
         StartCoroutine(FadeGUI());
     }
 
-    private IEnumerator FadeGUI() {
+    private IEnumerator FadeGUI()
+    {
         RestrictionManager.allInput = true;
         headerUI.transform.localPosition = Vector3.zero;
         headerUI.transform.localScale = Vector3.one * 1.3f;
@@ -477,12 +526,14 @@ public class RoundEndManager : MonoBehaviour {
 
         yield return new WaitForSeconds(0.65f);
 
-        while(blackStuff.alpha < 0.6f || headerUI.alpha < 1f) {
+        while (blackStuff.alpha < 0.6f || headerUI.alpha < 1f)
+        {
             vignetting.intensity = Mathf.MoveTowards(vignetting.intensity, 1.5f, Time.deltaTime * 3f);
             blackStuff.alpha = Mathf.MoveTowards(blackStuff.alpha, 0.6f, Time.deltaTime * 1.2f);
             GeneralVariables.uiController.GetComponent<GameManager>().remBlur = blackStuff.alpha * 1.6f;
 
-            if(GeneralVariables.spawnController) {
+            if (GeneralVariables.spawnController)
+            {
                 GeneralVariables.spawnController.blurREM = blackStuff.alpha * 1.2f;
             }
 
@@ -493,14 +544,16 @@ public class RoundEndManager : MonoBehaviour {
         yield return new WaitForSeconds(0.3f);
 
         Vector3 realTargetPos = (GeneralVariables.gameModeHasTeams) ? teamHeaderTargetPos : indHeaderTargetPos;
-        while((realTargetPos - headerUI.transform.localPosition).sqrMagnitude > 0.01f) {
+        while ((realTargetPos - headerUI.transform.localPosition).sqrMagnitude > 0.01f)
+        {
             headerUI.transform.localPosition = Vector3.Lerp(headerUI.transform.localPosition, realTargetPos, Time.deltaTime * 4.4f);
             headerUI.transform.localScale = Vector3.Lerp(Vector3.one * 1.3f, Vector3.one, headerUI.transform.localPosition.sqrMagnitude / realTargetPos.sqrMagnitude);
             yield return null;
         }
 
         float time = 0f;
-        while(time < 1f) {
+        while (time < 1f)
+        {
             otherPanel.alpha = time;
             roundLabel.alpha = time;
             time += Time.deltaTime * 2f;
@@ -510,7 +563,8 @@ public class RoundEndManager : MonoBehaviour {
         StartCoroutine(StartProgressAnimation(expAnimationDelay));
 
         countToNextRound = 30;
-        while(countToNextRound > 0) {
+        while (countToNextRound > 0)
+        {
             yield return new WaitForSeconds(1f);
             countToNextRound--;
         }
@@ -519,9 +573,11 @@ public class RoundEndManager : MonoBehaviour {
         StartCoroutine(StartNewRound());
     }
 
-    private IEnumerator StartNewRound() {
+    private IEnumerator StartNewRound()
+    {
         float time = 1f;
-        while(blackStuff.alpha < 1f || time > 0f) {
+        while (blackStuff.alpha < 1f || time > 0f)
+        {
             blackStuff.alpha = Mathf.MoveTowards(blackStuff.alpha, 1f, Time.deltaTime);
             time -= Time.deltaTime * 2f;
             headerUI.alpha = time;
@@ -531,17 +587,20 @@ public class RoundEndManager : MonoBehaviour {
         }
 
         GeneralVariables.uiController.GetComponent<GameManager>().remBlur = 0f;
-        
+
         yield return null;
 
-        if(roundLimit < 255) {
-            if(curRoundDisplay >= roundLimit) {
+        if (roundLimit < 255)
+        {
+            if (curRoundDisplay >= roundLimit)
+            {
                 Topan.Network.SetServerInfo("wnr", (byte)(winningTeam + 1));
                 GeneralVariables.Networking.GetComponent<Topan.NetworkView>().RPC(Topan.RPCMode.All, "LoadLobby");
             }
         }
 
-        if(Topan.Network.isServer) {
+        if (Topan.Network.isServer)
+        {
             Topan.Network.SetServerInfo("pl", (byte)Topan.Network.MaxPlayers);
             GeneralVariables.server.currentRound++;
             GeneralVariables.server.RestartRound();
@@ -553,20 +612,25 @@ public class RoundEndManager : MonoBehaviour {
 
         GeneralVariables.Networking.finishedGame = false;
 
-        if(GeneralVariables.player != null) {
+        if (GeneralVariables.player != null)
+        {
             Destroy(GeneralVariables.player);
         }
 
-        for(int i = 0; i < GeneralVariables.Networking.availablePlayers.Length; i++) {
+        for (int i = 0; i < GeneralVariables.Networking.availablePlayers.Length; i++)
+        {
             GeneralVariables.Networking.availablePlayers[i].GetComponent<Topan.NetworkView>().Destroy();
         }
 
-        for(int i = 0; i < GeneralVariables.Networking.availableBots.Length; i++) {
+        for (int i = 0; i < GeneralVariables.Networking.availableBots.Length; i++)
+        {
             GeneralVariables.Networking.availableBots[i].GetComponent<Topan.NetworkView>().Destroy();
         }
 
-        if(Topan.Network.isServer) {
-            foreach(Topan.NetworkPlayer p in Topan.Network.connectedPlayers) {
+        if (Topan.Network.isServer)
+        {
+            foreach (Topan.NetworkPlayer p in Topan.Network.connectedPlayers)
+            {
                 p.SetPlayerData("k", (UInt16)0);
                 p.SetPlayerData("a", (UInt16)0);
                 p.SetPlayerData("d", (UInt16)0);
@@ -574,8 +638,10 @@ public class RoundEndManager : MonoBehaviour {
                 p.SetPlayerData("sc", 0);
             }
 
-            foreach(BotPlayer b in BotManager.allBotPlayers) {
-                if(b == null) {
+            foreach (BotPlayer b in BotManager.allBotPlayers)
+            {
+                if (b == null)
+                {
                     continue;
                 }
 

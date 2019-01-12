@@ -24,7 +24,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 [DisallowMultipleComponent]
-public class MotionBlur : MonoBehaviour {
+public class MotionBlur : MonoBehaviour
+{
     private const float MAX_BLUR_RADIUS = 3f;
 
     public Shader motionBlurShader;
@@ -39,34 +40,42 @@ public class MotionBlur : MonoBehaviour {
     private Material mat;
     private RenderTextureFormat vectorFormat;
     private RenderTextureFormat packedFormat;
-    
-    private void Awake() {
+
+    private void Awake()
+    {
         cam = GetComponent<Camera>();
     }
 
-    private void OnEnable() {
-        if(motionBlurShader != null && motionBlurShader.isSupported && CheckTextureFormatSupport()) {
+    private void OnEnable()
+    {
+        if (motionBlurShader != null && motionBlurShader.isSupported && CheckTextureFormatSupport())
+        {
             mat = new Material(motionBlurShader);
             mat.hideFlags = HideFlags.HideAndDontSave;
 
             cam.depthTextureMode |= DepthTextureMode.Depth | DepthTextureMode.MotionVectors;
         }
-        else {
+        else
+        {
             enabled = false;
         }
     }
 
-    private void OnDisable() {
-        if(mat != null) {
+    private void OnDisable()
+    {
+        if (mat != null)
+        {
             DestroyImmediate(mat);
             mat = null;
-            
+
             cam.depthTextureMode &= ~DepthTextureMode.MotionVectors;
         }
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if(mat == null || velocityScale <= 0f) {
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (mat == null || velocityScale <= 0f)
+        {
             Graphics.Blit(source, destination);
             enabled = false;
             return;
@@ -75,7 +84,7 @@ public class MotionBlur : MonoBehaviour {
         int maxBlurPixels = (int)((source.height * MAX_BLUR_RADIUS) / 100f);
         int tileSize = ((maxBlurPixels - 1) / 8 + 1) * 8;
 
-        if(adjustWithFrameRate)
+        if (adjustWithFrameRate)
             mat.SetFloat("_VelocityScale", velocityScale * Mathf.Clamp((1f / Time.deltaTime) / 60f, 0f, 5f));
         else
             mat.SetFloat("_VelocityScale", velocityScale);
@@ -97,7 +106,7 @@ public class MotionBlur : MonoBehaviour {
         RenderTexture tile8 = GetTemporaryRT(source, 8, vectorFormat);
         Graphics.Blit(tile4, tile8, mat, 2);
         RenderTexture.ReleaseTemporary(tile4);
-        
+
         mat.SetFloat("_TileMaxOffs", ((tileSize / 8f) - 1f) * -0.5f);
         mat.SetInt("_TileMaxLoop", tileSize / 8);
 
@@ -108,7 +117,7 @@ public class MotionBlur : MonoBehaviour {
         RenderTexture neighborMax = GetTemporaryRT(source, tileSize, vectorFormat);
         Graphics.Blit(tile, neighborMax, mat, 4);
         RenderTexture.ReleaseTemporary(tile);
-        
+
         mat.SetTexture("_NeighborMaxTex", neighborMax);
         mat.SetTexture("_VelocityTex", velBuffer);
         Graphics.Blit(source, destination, mat, 5);
@@ -117,20 +126,22 @@ public class MotionBlur : MonoBehaviour {
         RenderTexture.ReleaseTemporary(neighborMax);
     }
 
-    private bool CheckTextureFormatSupport() {
+    private bool CheckTextureFormatSupport()
+    {
         vectorFormat = RenderTextureFormat.RGHalf;
         packedFormat = RenderTextureFormat.ARGB2101010;
 
-        if(!SystemInfo.SupportsRenderTextureFormat(vectorFormat))
+        if (!SystemInfo.SupportsRenderTextureFormat(vectorFormat))
             return false;
 
-        if(!SystemInfo.SupportsRenderTextureFormat(packedFormat))
+        if (!SystemInfo.SupportsRenderTextureFormat(packedFormat))
             packedFormat = RenderTextureFormat.ARGB32;
 
         return true;
     }
 
-    private RenderTexture GetTemporaryRT(RenderTexture source, int divider, RenderTextureFormat format) {
+    private RenderTexture GetTemporaryRT(RenderTexture source, int divider, RenderTextureFormat format)
+    {
         int w = source.width / divider;
         int h = source.height / divider;
         RenderTexture rt = RenderTexture.GetTemporary(w, h, 0, format, RenderTextureReadWrite.Linear);

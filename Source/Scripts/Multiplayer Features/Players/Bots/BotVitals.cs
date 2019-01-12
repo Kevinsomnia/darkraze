@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BotVitals : BaseStats {
+public class BotVitals : BaseStats
+{
     public SkinnedMeshRenderer playerMesh;
     public Material dissolveMat;
     public Rigidbody[] ragdollRigidbodies;
@@ -22,7 +23,8 @@ public class BotVitals : BaseStats {
     private int headID = -1;
     private int lastWeaponID = -1;
 
-    void Awake() {
+    void Awake()
+    {
         curHealth = maxHealth;
         base.hasLimbs = true;
         /*
@@ -39,8 +41,10 @@ public class BotVitals : BaseStats {
     }
 
     [RPC]
-    public override void ApplyDamageNetwork(byte damage, byte senderID, byte weaponID, byte bodyPart) {
-        if(Time.time - initTime <= 2f || GeneralVariables.Networking.finishedGame) {
+    public override void ApplyDamageNetwork(byte damage, byte senderID, byte weaponID, byte bodyPart)
+    {
+        if (Time.time - initTime <= 2f || GeneralVariables.Networking.finishedGame)
+        {
             return;
         }
 
@@ -48,12 +52,15 @@ public class BotVitals : BaseStats {
         ApplyDamage(damage, senderID, limb, weaponID + ((bodyPart > 4) ? 1000 : 0)); //>4 = grenade
     }
 
-    public override void ApplyDamageMain(int damage, bool showBlood, Limb.LimbType bodyPart) {
+    public override void ApplyDamageMain(int damage, bool showBlood, Limb.LimbType bodyPart)
+    {
         //ApplyDamage(damage, bm.myIndex + 64, bodyPart);
     }
 
-    private void ApplyDamage(int damage, int senderID, Limb.LimbType bodyPart, int weaponID = -1) {
-        if(!Topan.Network.isServer || isDead || damage <= 0) {
+    private void ApplyDamage(int damage, int senderID, Limb.LimbType bodyPart, int weaponID = -1)
+    {
+        if (!Topan.Network.isServer || isDead || damage <= 0)
+        {
             return;
         }
         /*
@@ -76,8 +83,10 @@ public class BotVitals : BaseStats {
         curHealth -= damage;
         base.headshot = (bodyPart == Limb.LimbType.Head);
 
-        if(!isDead && curHealth <= 0) {
-            if(!damageIDs.Contains((byte)senderID)) {
+        if (!isDead && curHealth <= 0)
+        {
+            if (!damageIDs.Contains((byte)senderID))
+            {
                 damageIDs.Add((byte)senderID);
                 damageInflicted.Add(9);
             }
@@ -89,8 +98,10 @@ public class BotVitals : BaseStats {
         }
     }
 
-    public void BotDeath() {
-        if(!Topan.Network.isServer) {
+    public void BotDeath()
+    {
+        if (!Topan.Network.isServer)
+        {
             return;
         }
 
@@ -147,20 +158,23 @@ public class BotVitals : BaseStats {
         isDead = true;*/
     }
 
-    void Topan_Deallocating() {
+    void Topan_Deallocating()
+    {
         curHealth = 0;
         isDead = true;
-       // bm.botDetector.enabled = false;
-     //   bw.StopReloadSound();
+        // bm.botDetector.enabled = false;
+        //   bw.StopReloadSound();
         SetRagdoll(true);
         GetComponent<AudioSource>().pitch = Random.Range(0.85f, 0.94f);
         GetComponent<AudioSource>().PlayOneShot(deathSound, Random.Range(0.3f, 0.35f));
     }
 
-    public void SetRagdoll(bool e) {
+    public void SetRagdoll(bool e)
+    {
         Limb latestLimb = null;
         //float latestTime = 0f;
-        for(int i = 0; i < ragdollRigidbodies.Length; i++) {
+        for (int i = 0; i < ragdollRigidbodies.Length; i++)
+        {
             ragdollRigidbodies[i].isKinematic = !e;
 
             /*
@@ -178,24 +192,30 @@ public class BotVitals : BaseStats {
             }*/
         }
 
-        if(latestLimb != null) {
+        if (latestLimb != null)
+        {
             Rigidbody rigid = latestLimb.GetComponent<Rigidbody>();
             rigid.AddForce(latestLimb.ragdollVelocity, ForceMode.Impulse);
 
             Limb.ExplosionVelocity lbExpl = latestLimb.explosionVelocity;
-            if(lbExpl != null) {
+            if (lbExpl != null)
+            {
                 rigid.AddExplosionForce(lbExpl.forceAmount, lbExpl.origin, lbExpl.forceRadius, lbExpl.upwardForce, ForceMode.Impulse);
             }
         }
 
-        for(int i = 0; i < ragdollColliders.Length; i++) {
+        for (int i = 0; i < ragdollColliders.Length; i++)
+        {
             ragdollColliders[i].isTrigger = !e;
         }
     }
 
-    private int GetDamageIndex(int pID) {
-        for(int i = 0; i < damageIDs.Count; i++) {
-            if(pID == damageIDs[i]) {
+    private int GetDamageIndex(int pID)
+    {
+        for (int i = 0; i < damageIDs.Count; i++)
+        {
+            if (pID == damageIDs[i])
+            {
                 return i;
             }
         }

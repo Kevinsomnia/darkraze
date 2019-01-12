@@ -3,96 +3,116 @@ using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class PostEffectsBaseC : MonoBehaviour {
+public class PostEffectsBaseC : MonoBehaviour
+{
     protected bool supportHDRTextures = true;
     protected bool supportDX11 = false;
     protected bool isSupported = true;
 
-    public Material CheckShaderAndCreateMaterial(Shader s, Material mat) {
-        if(s == null) {
+    public Material CheckShaderAndCreateMaterial(Shader s, Material mat)
+    {
+        if (s == null)
+        {
             Debug.LogError("Shader is currently missing!", this);
             isSupported = false;
             enabled = false;
             return null;
         }
 
-        if(s.isSupported && mat != null && mat.shader == s) {
+        if (s.isSupported && mat != null && mat.shader == s)
+        {
             return mat;
         }
 
-        if(!s.isSupported) {
+        if (!s.isSupported)
+        {
             NotSupported();
             return null;
         }
-        else {
+        else
+        {
             mat = new Material(s);
             mat.hideFlags = HideFlags.DontSave;
             return mat;
         }
     }
 
-    public Material CreateMaterial(Shader s, Material mat) {
-        if(s == null) {
+    public Material CreateMaterial(Shader s, Material mat)
+    {
+        if (s == null)
+        {
             Debug.LogError("Shader is currently missing!", this);
             isSupported = false;
             return null;
         }
 
-        if(mat != null && mat.shader == s && s.isSupported) {
+        if (mat != null && mat.shader == s && s.isSupported)
+        {
             return mat;
         }
 
-        if(!s.isSupported) {
+        if (!s.isSupported)
+        {
             NotSupported();
             return null;
         }
-        else {
+        else
+        {
             mat = new Material(s);
             mat.hideFlags = HideFlags.DontSave;
             return mat;
         }
     }
 
-    void OnEnable() {
+    void OnEnable()
+    {
         isSupported = true;
     }
 
-    public bool CheckSupport() {
+    public bool CheckSupport()
+    {
         return CheckSupport(false);
     }
 
-    public virtual bool CheckResources() {
+    public virtual bool CheckResources()
+    {
         Debug.Log("Override me please!", this);
         return isSupported;
     }
 
-    public bool CheckSupport(bool needDepth) {
+    public bool CheckSupport(bool needDepth)
+    {
         isSupported = true;
         supportHDRTextures = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf);
         supportDX11 = SystemInfo.graphicsShaderLevel >= 50 && SystemInfo.supportsComputeShaders;
 
-        if(!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures) {
+        if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
+        {
             NotSupported();
             return false;
         }
 
-        if(needDepth && !SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Depth)) {
+        if (needDepth && !SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Depth))
+        {
             NotSupported();
             return false;
         }
 
-        if(needDepth)
+        if (needDepth)
             GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
 
         return true;
     }
 
-    public bool CheckSupport(bool needDepth, bool needHdr) {
-        if(!CheckSupport(needDepth)) {
+    public bool CheckSupport(bool needDepth, bool needHdr)
+    {
+        if (!CheckSupport(needDepth))
+        {
             return false;
         }
 
-        if(needHdr && !supportHDRTextures) {
+        if (needHdr && !supportHDRTextures)
+        {
             NotSupported();
             return false;
         }
@@ -100,18 +120,21 @@ public class PostEffectsBaseC : MonoBehaviour {
         return true;
     }
 
-    public bool Dx11Support() {
+    public bool Dx11Support()
+    {
         return supportDX11;
     }
 
-    public void NotSupported() {
+    public void NotSupported()
+    {
         Debug.LogError("This image effect is not supported!", this);
         enabled = false;
         isSupported = false;
         return;
     }
 
-    public void DrawBorder(RenderTexture dest, Material material) {
+    public void DrawBorder(RenderTexture dest, Material material)
+    {
         float x1;
         float x2;
         float y1;
@@ -123,16 +146,19 @@ public class PostEffectsBaseC : MonoBehaviour {
         GL.PushMatrix();
         GL.LoadOrtho();
 
-        for(int i = 0; i < material.passCount; i++) {
+        for (int i = 0; i < material.passCount; i++)
+        {
             material.SetPass(i);
 
             float y1_;
             float y2_;
-            if(invertY) {
+            if (invertY)
+            {
                 y1_ = 1.0f;
                 y2_ = 0.0f;
             }
-            else {
+            else
+            {
                 y1_ = 0.0f;
                 y2_ = 1.0f;
             }

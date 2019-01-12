@@ -5,7 +5,8 @@ using System.Linq;
 using System;
 
 [System.Serializable]
-public class BotPlayer {
+public class BotPlayer
+{
     public byte team = 0;
     public CombatantInfo botInfo = null;
 
@@ -20,26 +21,33 @@ public class BotPlayer {
 }
 
 [System.Serializable]
-public class BotStats {
+public class BotStats
+{
     public int kills = 0;
     public int deaths = 0;
     public int headshots = 0;
     public int score = 0;
 }
 
-public class BotManager : MonoBehaviour {
+public class BotManager : MonoBehaviour
+{
     public static BotPlayer[] _sBots;
-    public static BotPlayer[] allBotPlayers {
-        get {
-            if(!Topan.Network.isConnected) {
+    public static BotPlayer[] allBotPlayers
+    {
+        get
+        {
+            if (!Topan.Network.isConnected)
+            {
                 return null;
             }
 
-            if(Topan.Network.isServer) {
+            if (Topan.Network.isServer)
+            {
                 return _sBots;
             }
 
-            if(!Topan.Network.HasServerInfo("bots")) {
+            if (!Topan.Network.HasServerInfo("bots"))
+            {
                 return null;
             }
 
@@ -47,9 +55,12 @@ public class BotManager : MonoBehaviour {
         }
     }
 
-    public static BotPlayer[] redBotPlayers {
-        get {
-            if(!GeneralVariables.gameModeHasTeams) {
+    public static BotPlayer[] redBotPlayers
+    {
+        get
+        {
+            if (!GeneralVariables.gameModeHasTeams)
+            {
                 return null;
             }
 
@@ -57,9 +68,12 @@ public class BotManager : MonoBehaviour {
         }
     }
 
-    public static BotPlayer[] blueBotPlayers {
-        get {
-            if(!GeneralVariables.gameModeHasTeams) {
+    public static BotPlayer[] blueBotPlayers
+    {
+        get
+        {
+            if (!GeneralVariables.gameModeHasTeams)
+            {
                 return null;
             }
 
@@ -75,32 +89,40 @@ public class BotManager : MonoBehaviour {
 
     private UIPanel panel;
 
-    void Start() {
+    void Start()
+    {
         panel = GetComponent<UIPanel>();
         panel.alpha = 0f;
     }
 
-    void Update() {
+    void Update()
+    {
         lagNote.alpha = Mathf.Lerp(lagNote.alpha, (amountSlider.currentValue > 8) ? lagNote.defaultAlpha : 0f, Time.unscaledDeltaTime * 14f);
     }
 
-    public void DisplayWindow(bool disp) {
+    public void DisplayWindow(bool disp)
+    {
         StartCoroutine(FadeAnimation(disp));
     }
 
-    private IEnumerator FadeAnimation(bool f) {
-        if(f) {
+    private IEnumerator FadeAnimation(bool f)
+    {
+        if (f)
+        {
             float fade = 0f;
-            while(fade < 1f) {
+            while (fade < 1f)
+            {
                 fade += Time.deltaTime * 8f;
                 panel.alpha = Mathf.Clamp01(fade);
                 blurGUI.blurSpread = Mathf.Clamp01(fade) * 0.9f;
                 yield return null;
             }
         }
-        else {
+        else
+        {
             float fade = 1f;
-            while(fade > 0f) {
+            while (fade > 0f)
+            {
                 fade -= Time.deltaTime * 8f;
                 panel.alpha = Mathf.Clamp01(fade);
                 blurGUI.blurSpread = Mathf.Clamp01(fade) * 0.9f;
@@ -111,14 +133,16 @@ public class BotManager : MonoBehaviour {
         }
     }
 
-    public static BotStats GetBotStats(int index) {
-        if(!Topan.Network.HasServerInfo("bS" + index.ToString())) {
+    public static BotStats GetBotStats(int index)
+    {
+        if (!Topan.Network.HasServerInfo("bS" + index.ToString()))
+        {
             return null;
         }
 
         BotStats newStats = new BotStats();
         string botInfo = Topan.Network.GetServerInfo("bS" + index.ToString()).ToString();
-        string[] thisBotInfo = botInfo.Split(new string[]{","}, StringSplitOptions.None);
+        string[] thisBotInfo = botInfo.Split(new string[] { "," }, StringSplitOptions.None);
 
         newStats.kills = int.Parse(thisBotInfo[0]);
         newStats.deaths = int.Parse(thisBotInfo[1]);
@@ -127,7 +151,8 @@ public class BotManager : MonoBehaviour {
         return newStats;
     }
 
-    public static string ParseToBotFormat(BotStats bStats) {
+    public static string ParseToBotFormat(BotStats bStats)
+    {
         return bStats.kills.ToString() + "," + bStats.deaths.ToString() + "," + bStats.headshots.ToString() + "," + bStats.score.ToString();
     }
 }

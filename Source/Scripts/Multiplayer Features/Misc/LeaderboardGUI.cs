@@ -5,9 +5,12 @@ using System.Linq;
 using System;
 
 [System.Serializable]
-public class NetPlayerInfo {
-    public bool thisPlayerIsBot {
-        get {
+public class NetPlayerInfo
+{
+    public bool thisPlayerIsBot
+    {
+        get
+        {
             return (botPlayer != null);
         }
     }
@@ -15,12 +18,16 @@ public class NetPlayerInfo {
     public Topan.NetworkPlayer realPlayer = null;
     public BotPlayer botPlayer = null;
 
-    public CombatantInfo myInfo {
-        get {
-            if(thisPlayerIsBot) {
+    public CombatantInfo myInfo
+    {
+        get
+        {
+            if (thisPlayerIsBot)
+            {
                 return botPlayer.botInfo;
             }
-            else if(realPlayer.HasInitialData("dat")) {
+            else if (realPlayer.HasInitialData("dat"))
+            {
                 return (CombatantInfo)realPlayer.GetInitialData("dat");
             }
 
@@ -28,8 +35,10 @@ public class NetPlayerInfo {
         }
     }
 
-    public int myTeam {
-        get {
+    public int myTeam
+    {
+        get
+        {
             return (thisPlayerIsBot) ? botPlayer.team : (byte)realPlayer.GetPlayerData("team", (byte)0);
         }
     }
@@ -40,31 +49,32 @@ public class NetPlayerInfo {
     public int myScore = 0;
 }
 
-public class LeaderboardGUI : MonoBehaviour {
+public class LeaderboardGUI : MonoBehaviour
+{
     public GameObject teamBasedLB;
     public GameObject individualBasedLB;
-	public UILabel tdmSubheader;
+    public UILabel tdmSubheader;
     public UILabel dmSubheader;
-	
-	[HideInInspector]
-	public UserStatsGUI[] redTeam;
-	public Transform redStart;
-	public UILabel totalStatsRed;
-	
-	[HideInInspector]
-	public UserStatsGUI[] blueTeam;
-	public Transform blueStart;
-	public UILabel totalStatsBlue;
+
+    [HideInInspector]
+    public UserStatsGUI[] redTeam;
+    public Transform redStart;
+    public UILabel totalStatsRed;
+
+    [HideInInspector]
+    public UserStatsGUI[] blueTeam;
+    public Transform blueStart;
+    public UILabel totalStatsBlue;
 
     [HideInInspector]
     public UserStatsGUI[] individuals;
     public Transform individualStart;
     public UILabel yourPlace;
-	
-	public UserStatsGUI individualUserPrefab;
+
+    public UserStatsGUI individualUserPrefab;
     public UserStatsGUI teamUserPrefab;
     public float rowSpacing = 25f;
-	public float refreshTime = 0.5f;
+    public float refreshTime = 0.5f;
     public UILabel roundVictoryStats;
     public AlphaGroupUI waitForRed;
     public AlphaGroupUI waitForBlue;
@@ -75,7 +85,7 @@ public class LeaderboardGUI : MonoBehaviour {
     [HideInInspector]
     public NetPlayerInfo yourPlayer;
 
-	private float refreshTimer;
+    private float refreshTimer;
 
     private bool waitingForRed;
     private bool waitingForBlue;
@@ -84,16 +94,19 @@ public class LeaderboardGUI : MonoBehaviour {
     private UInt16 tkBlue;
     private UInt16 tdRed;
     private UInt16 tdBlue;
-	
-	void Awake() {
-        if(GeneralVariables.gameModeHasTeams) {
+
+    void Awake()
+    {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             teamBasedLB.SetActive(true);
             individualBasedLB.SetActive(false);
 
             redTeam = new UserStatsGUI[8];
             blueTeam = new UserStatsGUI[8];
 
-            for(int i = 0; i < redTeam.Length; i++) {
+            for (int i = 0; i < redTeam.Length; i++)
+            {
                 UserStatsGUI instance = (UserStatsGUI)Instantiate(teamUserPrefab);
                 instance.gameObject.SetActive(false);
                 instance.transform.parent = redStart;
@@ -102,7 +115,8 @@ public class LeaderboardGUI : MonoBehaviour {
                 redTeam[i] = instance;
             }
 
-            for(int i = 0; i < blueTeam.Length; i++) {
+            for (int i = 0; i < blueTeam.Length; i++)
+            {
                 UserStatsGUI instance = (UserStatsGUI)Instantiate(teamUserPrefab);
                 instance.gameObject.SetActive(false);
                 instance.transform.parent = blueStart;
@@ -111,12 +125,14 @@ public class LeaderboardGUI : MonoBehaviour {
                 blueTeam[i] = instance;
             }
         }
-        else {
+        else
+        {
             teamBasedLB.SetActive(false);
             individualBasedLB.SetActive(true);
 
             individuals = new UserStatsGUI[16];
-            for(int i = 0; i < individuals.Length; i++) {
+            for (int i = 0; i < individuals.Length; i++)
+            {
                 UserStatsGUI instance = (UserStatsGUI)Instantiate(individualUserPrefab);
                 instance.gameObject.SetActive(false);
                 instance.transform.parent = individualStart;
@@ -125,40 +141,49 @@ public class LeaderboardGUI : MonoBehaviour {
                 individuals[i] = instance;
             }
         }
-	}
-	
-	void Start() {
-		refreshTimer = refreshTime;	
-	}
-	
-	void Update() {
-        if(!Topan.Network.isConnected) {
+    }
+
+    void Start()
+    {
+        refreshTimer = refreshTime;
+    }
+
+    void Update()
+    {
+        if (!Topan.Network.isConnected)
+        {
             return;
         }
 
-		refreshTimer -= Time.unscaledDeltaTime;
-		
-		if(refreshTimer <= 0f) {
-			Refresh();
-		}
+        refreshTimer -= Time.unscaledDeltaTime;
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (refreshTimer <= 0f)
+        {
+            Refresh();
+        }
+
+        if (GeneralVariables.gameModeHasTeams)
+        {
             waitForRed.alpha = Mathf.Lerp(waitForRed.alpha, (GeneralVariables.gameModeHasTeams && waitingForRed) ? 1f : 0f, Time.unscaledDeltaTime * 8f);
             waitForBlue.alpha = Mathf.Lerp(waitForBlue.alpha, (GeneralVariables.gameModeHasTeams && waitingForBlue) ? 1f : 0f, Time.unscaledDeltaTime * 8f);
         }
-        else {
+        else
+        {
             waitForPlayers.alpha = Mathf.Lerp(waitForPlayers.alpha, (GeneralVariables.gameModeHasTeams && GeneralVariables.Networking != null && Topan.Network.connectedPlayers.Length + GeneralVariables.Networking.botCount <= 1) ? 1f : 0f, Time.unscaledDeltaTime * 8f);
         }
-	}	
-	
-	public void Refresh() {
-        if(!Topan.Network.isConnected) {
+    }
+
+    public void Refresh()
+    {
+        if (!Topan.Network.isConnected)
+        {
             return;
         }
 
         sortedPlayers = new List<NetPlayerInfo>();
 
-        for(int i = 0; i < Topan.Network.connectedPlayers.Length; i++) {
+        for (int i = 0; i < Topan.Network.connectedPlayers.Length; i++)
+        {
             Topan.NetworkPlayer curPlayer = Topan.Network.connectedPlayers[i];
             NetPlayerInfo npi = new NetPlayerInfo();
 
@@ -169,12 +194,14 @@ public class LeaderboardGUI : MonoBehaviour {
             npi.myScore = (int)curPlayer.GetPlayerData("sc", 0);
             sortedPlayers.Add(npi);
 
-            if(curPlayer.id == Topan.Network.player.id) {
+            if (curPlayer.id == Topan.Network.player.id)
+            {
                 yourPlayer = npi;
             }
         }
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             int redIndex = 0;
             int blueIndex = 0;
             int redTotalScore = 0;
@@ -184,7 +211,8 @@ public class LeaderboardGUI : MonoBehaviour {
             waitingForBlue = true;
 
             BotPlayer[] redBots = NetworkingGeneral.GetBotParticipants(0);
-            for(int i = 0; i < redBots.Length; i++) {
+            for (int i = 0; i < redBots.Length; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(redBots[i].index);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -197,7 +225,8 @@ public class LeaderboardGUI : MonoBehaviour {
             }
 
             BotPlayer[] blueBots = NetworkingGeneral.GetBotParticipants(1);
-            for(int i = 0; i < blueBots.Length; i++) {
+            for (int i = 0; i < blueBots.Length; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(blueBots[i].index);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -209,21 +238,26 @@ public class LeaderboardGUI : MonoBehaviour {
                 sortedPlayers.Add(npi);
             }
 
-            if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills) {
+            if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myKills.CompareTo(p1.myKills));
             }
-            else if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score) {
+            else if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myScore.CompareTo(p1.myScore));
             }
 
             tdmSubheader.text = NetworkingGeneral.currentGameType.typeName + " [" + Topan.Network.GameName + "]";
-            for(int i = 0; i < sortedPlayers.Count; i++) {
+            for (int i = 0; i < sortedPlayers.Count; i++)
+            {
                 NetPlayerInfo current = sortedPlayers[i];
-                if(current.botPlayer == null && current.realPlayer == null) {
+                if (current.botPlayer == null && current.realPlayer == null)
+                {
                     continue;
                 }
 
-                if(current.myInfo == null) {
+                if (current.myInfo == null)
+                {
                     continue;
                 }
 
@@ -233,8 +267,10 @@ public class LeaderboardGUI : MonoBehaviour {
                 float kd = (deaths > 0) ? ((float)kills / (float)deaths) : kills;
 
                 UserStatsGUI usg = null;
-                if(current.myTeam == 0) {
-                    if(redIndex >= 8) {
+                if (current.myTeam == 0)
+                {
+                    if (redIndex >= 8)
+                    {
                         continue;
                     }
 
@@ -244,8 +280,10 @@ public class LeaderboardGUI : MonoBehaviour {
                     redTotalScore += score;
                     redIndex++;
                 }
-                else if(current.myTeam == 1) {
-                    if(blueIndex >= 8) {
+                else if (current.myTeam == 1)
+                {
+                    if (blueIndex >= 8)
+                    {
                         continue;
                     }
 
@@ -271,25 +309,31 @@ public class LeaderboardGUI : MonoBehaviour {
                     (thisListIndex % 2 == 0));
             }
 
-            if(redIndex < 7) {
-                for(int i = redIndex; i < 8; i++) {
+            if (redIndex < 7)
+            {
+                for (int i = redIndex; i < 8; i++)
+                {
                     redTeam[i].gameObject.SetActive(false);
                 }
             }
 
-            if(blueIndex < 7) {
-                for(int i = blueIndex; i < 8; i++) {
+            if (blueIndex < 7)
+            {
+                for (int i = blueIndex; i < 8; i++)
+                {
                     blueTeam[i].gameObject.SetActive(false);
                 }
             }
 
-            try {
+            try
+            {
                 tkRed = (UInt16)Topan.Network.GetServerInfo("rTK");
                 tkBlue = (UInt16)Topan.Network.GetServerInfo("bTK");
                 tdRed = (UInt16)Topan.Network.GetServerInfo("rTD");
                 tdBlue = (UInt16)Topan.Network.GetServerInfo("bTD");
             }
-            catch {
+            catch
+            {
                 tkRed = 0;
                 tkBlue = 0;
                 tdRed = 0;
@@ -317,11 +361,13 @@ public class LeaderboardGUI : MonoBehaviour {
 
             roundVictoryStats.text = "[CE1C1C](RED)[-] " + (byte)Topan.Network.GetServerInfo("rVic") + " [A0A0A0]|[-] " + (byte)Topan.Network.GetServerInfo("bVic") + " [2546A5](BLUE)[-]";
         }
-        else {
+        else
+        {
             int currentIndex = 0;
             int yourIndex = 1;
 
-            for(int i = 0; i < BotManager.allBotPlayers.Length && i < GeneralVariables.Networking.botCount; i++) {
+            for (int i = 0; i < BotManager.allBotPlayers.Length && i < GeneralVariables.Networking.botCount; i++)
+            {
                 BotStats hisStats = BotManager.GetBotStats(i);
 
                 NetPlayerInfo npi = new NetPlayerInfo();
@@ -333,21 +379,26 @@ public class LeaderboardGUI : MonoBehaviour {
                 sortedPlayers.Add(npi);
             }
 
-            if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills) {
+            if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Kills)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myKills.CompareTo(p1.myKills));
             }
-            else if(NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score) {
+            else if (NetworkingGeneral.currentGameType.sortPlayersBy == SortPlayersBy.Score)
+            {
                 sortedPlayers.Sort((p1, p2) => p2.myScore.CompareTo(p1.myScore));
             }
 
             dmSubheader.text = NetworkingGeneral.currentGameType.typeName + " [" + Topan.Network.GameName + "]";
-            for(int i = 0; i < sortedPlayers.Count; i++) {
+            for (int i = 0; i < sortedPlayers.Count; i++)
+            {
                 NetPlayerInfo current = sortedPlayers[i];
-                if(current.botPlayer == null && current.realPlayer == null) {
+                if (current.botPlayer == null && current.realPlayer == null)
+                {
                     continue;
                 }
 
-                if(current.myInfo == null) {
+                if (current.myInfo == null)
+                {
                     continue;
                 }
 
@@ -358,7 +409,8 @@ public class LeaderboardGUI : MonoBehaviour {
 
                 UserStatsGUI usg = null;
 
-                if(currentIndex >= 16) {
+                if (currentIndex >= 16)
+                {
                     continue;
                 }
 
@@ -366,7 +418,8 @@ public class LeaderboardGUI : MonoBehaviour {
                 usg.gameObject.SetActive(true);
                 currentIndex++;
 
-                if(!current.thisPlayerIsBot && current.realPlayer == Topan.Network.player) {
+                if (!current.thisPlayerIsBot && current.realPlayer == Topan.Network.player)
+                {
                     yourIndex = i;
                 }
 
@@ -383,8 +436,10 @@ public class LeaderboardGUI : MonoBehaviour {
                     (currentIndex % 2 == 0));
             }
 
-            if(currentIndex < 15) {
-                for(int i = currentIndex; i < 16; i++) {
+            if (currentIndex < 15)
+            {
+                for (int i = currentIndex; i < 16; i++)
+                {
                     individuals[i].gameObject.SetActive(false);
                 }
             }
@@ -397,6 +452,6 @@ public class LeaderboardGUI : MonoBehaviour {
             yourPlace.text = "You're in " + DarkRef.OrdinalIndicatorFormat(yourIndex + 1) + " place";
         }
 
-		refreshTimer += refreshTime;
-	}
+        refreshTimer += refreshTime;
+    }
 }

@@ -1,77 +1,96 @@
 using UnityEngine;
 
-public enum WaterQuality {
-	High = 2,
-	Medium = 1,
-	Low = 0,
+public enum WaterQuality
+{
+    High = 2,
+    Medium = 1,
+    Low = 0,
 }
 
 [ExecuteInEditMode]
-public class WaterBase : MonoBehaviour {
-	public Material sharedMaterial;
-	public WaterQuality waterQuality = WaterQuality.High;
-	public bool edgeBlend = true;
+public class WaterBase : MonoBehaviour
+{
+    public Material sharedMaterial;
+    public WaterQuality waterQuality = WaterQuality.High;
+    public bool edgeBlend = true;
 
     private GameSettings gSettings;
-	private PlanarReflection pr;
-		
-	void Start() {
-		pr = GetComponent<PlanarReflection>();
+    private PlanarReflection pr;
+
+    void Start()
+    {
+        pr = GetComponent<PlanarReflection>();
         gSettings = GameSettings.settingsController;
-	}
-	
-	void Update() {
-        if(gSettings != null) {
+    }
+
+    void Update()
+    {
+        if (gSettings != null)
+        {
             string wQual = gSettings.waterQuality;
-            if(wQual == "High" || wQual == "Very High") {
+            if (wQual == "High" || wQual == "Very High")
+            {
                 waterQuality = WaterQuality.High;
             }
-            else if(wQual == "Medium") {
+            else if (wQual == "Medium")
+            {
                 waterQuality = WaterQuality.Medium;
             }
-            else {
+            else
+            {
                 waterQuality = WaterQuality.Low;
             }
         }
 
-		if(sharedMaterial != null) {	
-			UpdateShader();
+        if (sharedMaterial != null)
+        {
+            UpdateShader();
         }
-	}
+    }
 
-    public void WaterTileBeingRendered(Transform tr, Camera currentCam) {
-        if(currentCam && edgeBlend) {
+    public void WaterTileBeingRendered(Transform tr, Camera currentCam)
+    {
+        if (currentCam && edgeBlend)
+        {
             currentCam.depthTextureMode |= DepthTextureMode.Depth;
         }
     }
 
-    private void UpdateShader() {
-        if(waterQuality == WaterQuality.High) {
+    private void UpdateShader()
+    {
+        if (waterQuality == WaterQuality.High)
+        {
             sharedMaterial.shader.maximumLOD = 501;
         }
-        else if(waterQuality == WaterQuality.Medium) {
+        else if (waterQuality == WaterQuality.Medium)
+        {
             sharedMaterial.shader.maximumLOD = 301;
         }
-        else {
+        else
+        {
             sharedMaterial.shader.maximumLOD = 201;
         }
 
         pr.enabled = (waterQuality != WaterQuality.Low);
 
-        if(!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Depth)) {
+        if (!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Depth))
+        {
             edgeBlend = false;
         }
 
-        if(edgeBlend) {
+        if (edgeBlend)
+        {
             Shader.EnableKeyword("WATER_EDGEBLEND_ON");
             Shader.DisableKeyword("WATER_EDGEBLEND_OFF");
 
             // just to make sure (some peeps might forget to add a water tile to the patches)
-            if(Camera.main) {
+            if (Camera.main)
+            {
                 Camera.main.depthTextureMode |= DepthTextureMode.Depth;
             }
         }
-        else {
+        else
+        {
             Shader.EnableKeyword("WATER_EDGEBLEND_OFF");
             Shader.DisableKeyword("WATER_EDGEBLEND_ON");
         }

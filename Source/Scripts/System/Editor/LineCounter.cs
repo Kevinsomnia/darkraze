@@ -5,13 +5,16 @@ using System.Text;
 using System.IO;
 
 //Statistics for counting lines in all of the scripts folder.
-public class LineCounter : EditorWindow {
-    struct File {
+public class LineCounter : EditorWindow
+{
+    struct File
+    {
         public string name;
         public string displayName;
         public int numLines;
 
-        public File(string name, string displayName, int numLines) {
+        public File(string name, string displayName, int numLines)
+        {
             this.name = name;
             this.displayName = displayName;
             this.numLines = numLines;
@@ -22,17 +25,17 @@ public class LineCounter : EditorWindow {
     private Vector2 scrollPos = Vector2.zero;
     private string directoryToCheck = "/Assets/MAIN - Blackraze";
 
-    private enum SortMethod {LineCount, Alphabetical};
+    private enum SortMethod { LineCount, Alphabetical };
     private static SortMethod sortMethod = SortMethod.LineCount;
 
-    private enum DisplayMethod {Default, Graph, TextOnly};
+    private enum DisplayMethod { Default, Graph, TextOnly };
     private static DisplayMethod displayMethod = DisplayMethod.Default;
 
     private static List<string> blacklist;
     private static bool ignoreEmptyLines = false;
     private static bool displayMatchesOnly = true;
     private static bool comparisonMode = false;
-    
+
     private static string search = "";
 
     private List<File> fileStats = new List<File>();
@@ -42,7 +45,8 @@ public class LineCounter : EditorWindow {
     private string directory;
 
     [MenuItem("Tools/Statistics/Line Counter %&C", false, 1)]
-    public static void Init() {
+    public static void Init()
+    {
         blacklist = new List<string>();
         blacklist.Add("Editor");
 
@@ -52,7 +56,8 @@ public class LineCounter : EditorWindow {
         displayMatchesOnly = EditorPrefs.GetBool("LC_DisplayMatchesOnly", true);
         comparisonMode = EditorPrefs.GetBool("LC_ComparisonMode", false);
 
-        if(displayMethod != DisplayMethod.Graph) {
+        if (displayMethod != DisplayMethod.Graph)
+        {
             search = EditorPrefs.GetString("LC_SavedSearch", "");
         }
 
@@ -61,12 +66,14 @@ public class LineCounter : EditorWindow {
         window.Focus();
         window.CountLines();
     }
-    
-    void OnGUI() {
+
+    void OnGUI()
+    {
         GUILayout.Space(7f);
 
         GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-        if(stringStats != null) {
+        if (stringStats != null)
+        {
             EditorGUILayout.HelpBox(stringStats.ToString(), MessageType.None);
 
             GUILayout.Space(5f);
@@ -78,31 +85,38 @@ public class LineCounter : EditorWindow {
 
             GUILayout.Space(4f);
 
-            if(displayMethod != DisplayMethod.Graph) {
+            if (displayMethod != DisplayMethod.Graph)
+            {
                 search = EditorGUILayout.TextField("Search Script Name:", search);
 
-                if(GUI.changed) {
+                if (GUI.changed)
+                {
                     EditorPrefs.SetString("LC_SavedSearch", search);
                 }
 
-                if(displayMethod == DisplayMethod.Default) {
+                if (displayMethod == DisplayMethod.Default)
+                {
                     EditorGUI.indentLevel += 1;
                     displayMatchesOnly = EditorGUILayout.Toggle("Display Matches Only:", displayMatchesOnly);
 
-                    if(displayMatchesOnly) {
+                    if (displayMatchesOnly)
+                    {
                         comparisonMode = EditorGUILayout.Toggle("Comparison Mode:", comparisonMode);
                     }
-                    else {
+                    else
+                    {
                         comparisonMode = false;
                     }
                     EditorGUI.indentLevel -= 1;
                 }
             }
-            else {
+            else
+            {
                 search = "";
             }
 
-            if(GUI.changed) {
+            if (GUI.changed)
+            {
                 EditorPrefs.SetInt("LC_SortMethod", (int)sortMethod);
                 EditorPrefs.SetInt("LC_DisplayMode", (int)displayMethod);
                 EditorPrefs.SetBool("LC_IgnoreEmptyLines", ignoreEmptyLines);
@@ -114,40 +128,51 @@ public class LineCounter : EditorWindow {
 
             GUILayout.Space(5f);
 
-            if(fileStats != null) {
+            if (fileStats != null)
+            {
                 string builtString = "";
                 int displayCount = 0;
-                for(int i = 0; i < fileStats.Count; i++) {
+                for (int i = 0; i < fileStats.Count; i++)
+                {
                     float alphaMod = 1f;
                     float finalHeight = 15f;
-                    if(!string.IsNullOrEmpty(search) && !fileStats[i].displayName.ToLower().Contains(search.ToLower())) {
-                        if(displayMethod == DisplayMethod.TextOnly) {
+                    if (!string.IsNullOrEmpty(search) && !fileStats[i].displayName.ToLower().Contains(search.ToLower()))
+                    {
+                        if (displayMethod == DisplayMethod.TextOnly)
+                        {
                             continue;
                         }
 
-                        if(comparisonMode) {
+                        if (comparisonMode)
+                        {
                             finalHeight = 1f;
                             alphaMod = 0.5f;
                         }
-                        else if(displayMatchesOnly) {
+                        else if (displayMatchesOnly)
+                        {
                             continue;
                         }
-                        else {
+                        else
+                        {
                             alphaMod = 0.3f;
                         }
                     }
 
                     displayCount++;
 
-                    if(displayMethod == DisplayMethod.TextOnly) {
+                    if (displayMethod == DisplayMethod.TextOnly)
+                    {
                         builtString += (i + 1).ToString() + " - " + fileStats[i].displayName + " -> [" + fileStats[i].numLines.ToString() + "]";
 
-                        if(i < fileStats.Count - 1) {
+                        if (i < fileStats.Count - 1)
+                        {
                             builtString += "\n";
                         }
                     }
-                    else {
-                        if(displayMethod == DisplayMethod.Graph) {
+                    else
+                    {
+                        if (displayMethod == DisplayMethod.Graph)
+                        {
                             finalHeight = 1f;
                         }
 
@@ -164,7 +189,8 @@ public class LineCounter : EditorWindow {
                         displayRect.width *= (fileStats[i].numLines / (float)largestLineCountRef.numLines);
                         displayRect.width = Mathf.Round(displayRect.width);
 
-                        if(Event.current.type == EventType.Repaint && displayRect.width > 1f) {
+                        if (Event.current.type == EventType.Repaint && displayRect.width > 1f)
+                        {
                             GUI.Box(displayRect, "");
                         }
 
@@ -177,7 +203,8 @@ public class LineCounter : EditorWindow {
                         displayRect.width *= (fileStats[i].numLines / (float)totalLines);
                         displayRect.width = Mathf.Round(displayRect.width);
 
-                        if(Event.current.type == EventType.Repaint && displayRect.width > 1f) {
+                        if (Event.current.type == EventType.Repaint && displayRect.width > 1f)
+                        {
                             GUI.Box(displayRect, "");
                         }
 
@@ -188,7 +215,8 @@ public class LineCounter : EditorWindow {
 
                         displayRect.y += 1;
 
-                        if(displayMethod != DisplayMethod.Graph) {
+                        if (displayMethod != DisplayMethod.Graph)
+                        {
                             int oldFontSize = GUI.skin.label.fontSize;
                             GUI.skin.label.fontSize = 9;
                             GUI.skin.label.alignment = TextAnchor.MiddleLeft;
@@ -203,29 +231,34 @@ public class LineCounter : EditorWindow {
                     }
                 }
 
-                if(displayCount <= 0) {
+                if (displayCount <= 0)
+                {
                     EditorGUILayout.HelpBox("No results...", MessageType.None);
                 }
-                else if(!string.IsNullOrEmpty(builtString) && displayMethod == DisplayMethod.TextOnly) {
+                else if (!string.IsNullOrEmpty(builtString) && displayMethod == DisplayMethod.TextOnly)
+                {
                     EditorGUILayout.HelpBox(builtString, MessageType.None);
                 }
             }
 
             EditorGUILayout.EndScrollView();
         }
-        else {
+        else
+        {
             EditorGUILayout.HelpBox("REFRESH THE WINDOW BY PRESSING CTRL+ALT+C", MessageType.None);
         }
     }
 
-    private void CountLines() {
+    private void CountLines()
+    {
         directory = Directory.GetCurrentDirectory();
         directory += directoryToCheck;
         fileStats = new List<File>();
         ProcessDirectory(fileStats, directory);
 
         totalLines = 0;
-        foreach(File f in fileStats) {
+        foreach (File f in fileStats)
+        {
             totalLines += f.numLines;
         }
 
@@ -239,23 +272,30 @@ public class LineCounter : EditorWindow {
         averageLines = Mathf.Round(totalLines * 10f / fileStats.Count) / 10f;
         float avgLineDelta = (averageLines - EditorPrefs.GetFloat("LC_OldAvgLines_" + PlayerSettings.productName, 0f));
         stringStats.Append("Averages Lines per Script: " + averageLines.ToString("F1") + " lines " + ((avgLineDelta != 0f) ? "   [" + ((avgLineDelta > 0f) ? "+" : "") + avgLineDelta.ToString("F1") + " avg line(s)]" : ""));
-               
-        if(sortMethod == SortMethod.LineCount) {
+
+        if (sortMethod == SortMethod.LineCount)
+        {
             fileStats.Sort((f1, f2) => f2.numLines.CompareTo(f1.numLines));
         }
-        else if(sortMethod == SortMethod.Alphabetical) {
+        else if (sortMethod == SortMethod.Alphabetical)
+        {
             fileStats.Sort((f1, f2) => f1.displayName.CompareTo(f2.displayName));
         }
 
         largestLineCountRef = new File();
-        if(fileStats.Count > 0) {
-            if(sortMethod == SortMethod.LineCount) {
+        if (fileStats.Count > 0)
+        {
+            if (sortMethod == SortMethod.LineCount)
+            {
                 largestLineCountRef = fileStats[0];
             }
-            else if(sortMethod == SortMethod.Alphabetical) {
+            else if (sortMethod == SortMethod.Alphabetical)
+            {
                 int largestLine = 0;
-                for(int i = 0; i < fileStats.Count; i++) {
-                    if(fileStats[i].numLines > largestLine) {
+                for (int i = 0; i < fileStats.Count; i++)
+                {
+                    if (fileStats[i].numLines > largestLine)
+                    {
                         largestLineCountRef = fileStats[i];
                         largestLine = fileStats[i].numLines;
                     }
@@ -270,18 +310,23 @@ public class LineCounter : EditorWindow {
         EditorPrefs.SetFloat("LC_OldAvgLines_" + PlayerSettings.productName, averageLines);
     }
 
-    private static void ProcessDirectory(List<File> stats, string dir) {
+    private static void ProcessDirectory(List<File> stats, string dir)
+    {
         string[] strArrFiles = Directory.GetFiles(dir, "*.cs");
-        foreach(string strFileName in strArrFiles) {
+        foreach (string strFileName in strArrFiles)
+        {
             bool skip = false;
-            foreach(string bl in blacklist) {
-                if(strFileName.Contains(bl)) {
+            foreach (string bl in blacklist)
+            {
+                if (strFileName.Contains(bl))
+                {
                     skip = true;
                     break;
                 }
             }
 
-            if(skip) {
+            if (skip)
+            {
                 continue;
             }
 
@@ -289,38 +334,45 @@ public class LineCounter : EditorWindow {
         }
 
         string[] strArrSubDir = Directory.GetDirectories(dir);
-        foreach(string strSubDir in strArrSubDir) {
+        foreach (string strSubDir in strArrSubDir)
+        {
             ProcessDirectory(stats, strSubDir);
         }
     }
 
-    private static void ProcessFile(List<File> stats, string filename) {
+    private static void ProcessFile(List<File> stats, string filename)
+    {
         StreamReader reader = System.IO.File.OpenText(filename);
 
         int lineCount = 0;
-        while(reader.Peek() >= 0) {
+        while (reader.Peek() >= 0)
+        {
             string curLine = reader.ReadLine();
-            if(RemoveSpaces(curLine).Length > ((ignoreEmptyLines) ? 0 : -1)) {
+            if (RemoveSpaces(curLine).Length > ((ignoreEmptyLines) ? 0 : -1))
+            {
                 lineCount++;
             }
         }
 
-        if(lineCount <= 0) {
+        if (lineCount <= 0)
+        {
             reader.Close();
             return;
         }
 
         string dispName = filename;
         int lastSlash = dispName.LastIndexOf(@"\");
-        if(lastSlash > -1) {
+        if (lastSlash > -1)
+        {
             dispName = dispName.Substring(lastSlash + 1);
         }
 
         stats.Add(new File(filename, dispName, lineCount));
         reader.Close();
     }
-	
-	public static string RemoveSpaces(string toRemove) {
+
+    public static string RemoveSpaces(string toRemove)
+    {
         return toRemove.Trim().Replace(" ", "");
     }
 }

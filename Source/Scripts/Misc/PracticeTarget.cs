@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PracticeTarget : BaseStats {
+public class PracticeTarget : BaseStats
+{
     public Renderer targetRenderer;
     public string colorPropertyName = "_Color";
     public Light targetIllum;
@@ -19,25 +20,32 @@ public class PracticeTarget : BaseStats {
     private float dmgTime = -100f;
     private float defaultIllum;
 
-    void Awake() {
-        if(targetIllum != null) {
+    void Awake()
+    {
+        if (targetIllum != null)
+        {
             defaultIllum = targetIllum.intensity;
         }
 
         ResetTarget();
     }
 
-    void Update() {
-        if(maxHealth <= 0) {
+    void Update()
+    {
+        if (maxHealth <= 0)
+        {
             return;
         }
 
-        if(Time.time - dmgTime >= damageColorTime) {
-            if(targetRenderer != null) {
+        if (Time.time - dmgTime >= damageColorTime)
+        {
+            if (targetRenderer != null)
+            {
                 targetRenderer.material.SetColor(colorPropertyName, Color.Lerp(targetRenderer.material.GetColor(colorPropertyName), (isDead) ? inactiveColor : Color.Lerp(deadColor, defaultColor, (float)curHealth / (float)maxHealth), Time.deltaTime * 10f));
             }
 
-            if(targetIllum != null) {
+            if (targetIllum != null)
+            {
                 targetIllum.intensity = Mathf.Lerp(targetIllum.intensity, (isDead) ? 0f : defaultIllum, Time.deltaTime * 5f);
                 targetIllum.enabled = targetIllum.intensity > 0f;
                 targetIllum.color = targetRenderer.material.GetColor(colorPropertyName);
@@ -45,45 +53,54 @@ public class PracticeTarget : BaseStats {
         }
     }
 
-    public override void ApplyDamageMain(int damage, bool showBlood) {
+    public override void ApplyDamageMain(int damage, bool showBlood)
+    {
         ApplyDamage(damage);
     }
 
-    private void ApplyDamage(int damage) {
-        if(isDead || damage <= 0)
+    private void ApplyDamage(int damage)
+    {
+        if (isDead || damage <= 0)
             return;
-        
-        if(damageText != null) {
+
+        if (damageText != null)
+        {
             DamageText dt = Instantiate(damageText, transform.position + textOffset, damageText.transform.rotation);
             dt.DoDamage(damage, textVelocity + (new Vector3(textVelocity.x * Random.value, textVelocity.y * Random.value, Random.value * textVelocity.z) * 0.5f));
         }
 
         curHealth -= damage;
-        if(targetRenderer != null) {
+        if (targetRenderer != null)
+        {
             targetRenderer.material.SetColor(colorPropertyName, damageHitColor);
         }
 
-        if(targetIllum != null) {
+        if (targetIllum != null)
+        {
             targetIllum.color = damageHitColor;
         }
 
         dmgTime = Time.time;
 
-        if(curHealth <= 0) {
+        if (curHealth <= 0)
+        {
             TargetDestroyed();
         }
     }
 
-    private void TargetDestroyed() {
+    private void TargetDestroyed()
+    {
         curHealth = 0;
         isDead = true;
 
-        if(respawnTime > 0f) {
+        if (respawnTime > 0f)
+        {
             Invoke("ResetTarget", respawnTime);
         }
     }
 
-    public void ResetTarget() {
+    public void ResetTarget()
+    {
         curHealth = maxHealth;
         dmgTime = -damageColorTime;
         isDead = false;

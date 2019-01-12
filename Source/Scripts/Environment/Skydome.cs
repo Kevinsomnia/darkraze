@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-public class Skydome : MonoBehaviour {
+public class Skydome : MonoBehaviour
+{
     public Light sun;
     public bool autoComputeLightColor = true;
 
@@ -28,13 +29,15 @@ public class Skydome : MonoBehaviour {
     private float STD_MERIDIAN;
 
 
-    void Start() {
+    void Start()
+    {
         LATITUDE_RADIANS = Mathf.Deg2Rad * latitude;
         LONGITUDE_RADIANS = Mathf.Deg2Rad * longitude;
         STD_MERIDIAN = meridian * 15.0f;
     }
 
-    void Update() {
+    void Update()
+    {
         CalculateAtmosphere();
 
         Material sharedMat = GetComponent<Renderer>().sharedMaterial;
@@ -49,13 +52,15 @@ public class Skydome : MonoBehaviour {
         sharedMat.SetFloat("SunColorIntensity", sunColorIntensity);
     }
 
-    void CalculateAtmosphere() {
+    void CalculateAtmosphere()
+    {
         CalculateRay();
         CalculateMieCoeff();
         InitSunThetaPhi();
     }
 
-    void CalculateRay() {
+    void CalculateRay()
+    {
         float fRayleighFactor = rayFactor * 1.384826e-31f;
 
         m_vBetaRayTheta.x = fRayleighFactor / 3.570126e-25f;
@@ -67,7 +72,8 @@ public class Skydome : MonoBehaviour {
         vBetaRayleigh.z = 8.0f * fRayleighFactor / 1.527199e-25f;
     }
 
-    void CalculateMieCoeff() {
+    void CalculateMieCoeff()
+    {
         float c = (0.6544f * turbidity - 0.6510f) * 1e-16f;	//Concentration factor
 
         float fMieFactor = mieFactor * c * 17.13363f;
@@ -85,29 +91,34 @@ public class Skydome : MonoBehaviour {
         vBetaMie.z = 0.67f * fMieFactor / pow3;
     }
 
-    void ComputeAttenuation(float m_fTheta) {
+    void ComputeAttenuation(float m_fTheta)
+    {
         float fBeta = 0.0460836f * turbidity - 0.0458602f;
         float[] fTau = new float[3];
         float tmp = 93.885f - (m_fTheta / Mathf.PI * 180.0f);
 
         float m = 1.0f / (Mathf.Cos(m_fTheta) + 0.15f * tmp);
-        if(m < 0f) {
+        if (m < 0f)
+        {
             m = 20f;
         }
 
         float[] fLambda = new float[3] { 0.65f, 0.57f, 0.475f };
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
+        {
             float fTauR = Mathf.Exp(-m * 0.008735f * Mathf.Pow(fLambda[i], -4.08f));
             float fTauA = Mathf.Exp(-m * fBeta * Mathf.Pow(fLambda[i], -1.3f));
             fTau[i] = fTauR * fTauA;
         }
 
-        if(autoComputeLightColor) {
+        if (autoComputeLightColor)
+        {
             sun.color = new Color(fTau[0], fTau[1], fTau[2]);
         }
     }
 
-    void InitSunThetaPhi() {
+    void InitSunThetaPhi()
+    {
         float solarTime = time + 1 + (0.170f * Mathf.Sin(4f * Mathf.PI * (julianDate - 80f) / 373f) - 0.129f * Mathf.Sin(2f * Mathf.PI * (julianDate - 8f) / 355f)) + (STD_MERIDIAN - LONGITUDE_RADIANS) / 15.0f;
         float solarDeclination = (0.4093f * Mathf.Sin(2f * Mathf.PI * (julianDate - 81f) / 368f));
         float solarAltitude = Mathf.Asin(Mathf.Sin(LATITUDE_RADIANS) * Mathf.Sin(solarDeclination) -
@@ -126,7 +137,8 @@ public class Skydome : MonoBehaviour {
         ComputeAttenuation(thetaS);
     }
 
-    private Vector3 calcDirection(float thetaSun, float phiSun) {
+    private Vector3 calcDirection(float thetaSun, float phiSun)
+    {
         Vector3 dir = new Vector3();
         dir.x = Mathf.Cos(0.5f * Mathf.PI - thetaSun) * Mathf.Cos(phiSun);
         dir.y = Mathf.Sin(0.5f * Mathf.PI - thetaSun);
@@ -134,7 +146,8 @@ public class Skydome : MonoBehaviour {
         return dir.normalized;
     }
 
-    private static Vector3 SphericalToCartesian(Vector3 sphereCoords) {
+    private static Vector3 SphericalToCartesian(Vector3 sphereCoords)
+    {
         Vector3 store;
         store.y = sphereCoords.x * Mathf.Sin(sphereCoords.z);
         float a = sphereCoords.x * Mathf.Cos(sphereCoords.z);
@@ -143,13 +156,14 @@ public class Skydome : MonoBehaviour {
         return store;
     }
 
-    private static Vector3 CartesianToSpherical(Vector3 cartCoords) {
+    private static Vector3 CartesianToSpherical(Vector3 cartCoords)
+    {
         Vector3 store;
-        if(cartCoords.x == 0)
+        if (cartCoords.x == 0)
             cartCoords.x = Mathf.Epsilon;
         store.x = Mathf.Sqrt((cartCoords.x * cartCoords.x) + (cartCoords.y * cartCoords.y) + (cartCoords.z * cartCoords.z));
         store.y = Mathf.Atan(cartCoords.z / cartCoords.x);
-        if(cartCoords.x < 0)
+        if (cartCoords.x < 0)
             store.y += Mathf.PI;
         store.z = Mathf.Asin(cartCoords.y / store.x);
         return store;

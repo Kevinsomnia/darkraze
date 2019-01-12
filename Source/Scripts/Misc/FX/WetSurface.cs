@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-public class WetSurface : MonoBehaviour {
+public class WetSurface : MonoBehaviour
+{
     public bool m_DisablePixelLights = true;
     public bool m_DisableShadows = false;
     public int m_TextureSize = 256;
@@ -22,19 +23,21 @@ public class WetSurface : MonoBehaviour {
     private static bool s_InsideWater = false;
     private int lastRenderObjTime = 0;
 
-    void Awake() {
+    void Awake()
+    {
         pixelLightCached = m_DisablePixelLights;
     }
 
-    public void OnWillRenderObject() {
-        if(!enabled || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial || !GetComponent<Renderer>().enabled)
+    public void OnWillRenderObject()
+    {
+        if (!enabled || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial || !GetComponent<Renderer>().enabled)
             return;
 
         Camera cam = Camera.current;
-        if(!cam)
+        if (!cam)
             return;
 
-        if(s_InsideWater)
+        if (s_InsideWater)
             return;
         s_InsideWater = true;
 
@@ -48,9 +51,9 @@ public class WetSurface : MonoBehaviour {
 
         int oldPixelLightCount = QualitySettings.pixelLightCount;
         float oldShadowDist = QualitySettings.shadowDistance;
-        if(m_DisablePixelLights)
+        if (m_DisablePixelLights)
             QualitySettings.pixelLightCount = 0;
-        if(m_DisableShadows)
+        if (m_DisableShadows)
             QualitySettings.shadowDistance = 0f;
 
         UpdateCameraModes(cam, reflectionCamera);
@@ -81,30 +84,33 @@ public class WetSurface : MonoBehaviour {
         GL.invertCulling = false;
         GetComponent<Renderer>().sharedMaterial.SetTexture("_ReflectionTex", m_ReflectionTexture);
 
-        if(m_DisablePixelLights)
+        if (m_DisablePixelLights)
             QualitySettings.pixelLightCount = oldPixelLightCount;
-        if(m_DisableShadows)
+        if (m_DisableShadows)
             QualitySettings.shadowDistance = oldShadowDist;
 
         s_InsideWater = false;
     }
 
 
-    void OnDisable() {
-        if(m_ReflectionTexture) {
+    void OnDisable()
+    {
+        if (m_ReflectionTexture)
+        {
             DestroyImmediate(m_ReflectionTexture);
             m_ReflectionTexture = null;
         }
-        foreach(DictionaryEntry kvp in m_ReflectionCameras)
+        foreach (DictionaryEntry kvp in m_ReflectionCameras)
             DestroyImmediate(((Camera)kvp.Value).gameObject);
         m_ReflectionCameras.Clear();
     }
 
-    void Update() {
-        if(!GetComponent<Renderer>())
+    void Update()
+    {
+        if (!GetComponent<Renderer>())
             return;
         Material mat = GetComponent<Renderer>().sharedMaterial;
-        if(!mat)
+        if (!mat)
             return;
 
         m_TextureSize = Mathf.Clamp(m_TextureSize, 16, 1024);
@@ -112,17 +118,22 @@ public class WetSurface : MonoBehaviour {
         m_DisablePixelLights = pixelLightCached;
 
         GameSettings gSet = GameSettings.settingsController;
-        if(gSet != null) {
-            if(gSet.waterQuality == "Very High") {
+        if (gSet != null)
+        {
+            if (gSet.waterQuality == "Very High")
+            {
                 textureDownsample = 1f;
             }
-            else if(gSet.waterQuality == "High") {
+            else if (gSet.waterQuality == "High")
+            {
                 textureDownsample = 0.8f;
             }
-            else if(gSet.waterQuality == "Medium") {
+            else if (gSet.waterQuality == "Medium")
+            {
                 textureDownsample = 0.6f;
             }
-            else {
+            else
+            {
                 textureDownsample = 0.5f;
                 m_DisablePixelLights = true;
             }
@@ -147,8 +158,9 @@ public class WetSurface : MonoBehaviour {
         mat.SetMatrix("_WaveMatrix2", scrollMatrix);
     }
 
-    private void UpdateCameraModes(Camera src, Camera dest) {
-        if(dest == null)
+    private void UpdateCameraModes(Camera src, Camera dest)
+    {
+        if (dest == null)
             return;
         // set water camera to clear the same way as current camera
         dest.clearFlags = src.clearFlags;
@@ -162,11 +174,13 @@ public class WetSurface : MonoBehaviour {
         dest.orthographicSize = src.orthographicSize;
     }
 
-    private void CreateWaterObjects(Camera currentCamera, out Camera reflectionCamera) {
+    private void CreateWaterObjects(Camera currentCamera, out Camera reflectionCamera)
+    {
         reflectionCamera = null;
 
-        if(!m_ReflectionTexture || m_OldReflectionTextureSize != m_TextureSize || oldTextureDownsample != textureDownsample) {
-            if(m_ReflectionTexture)
+        if (!m_ReflectionTexture || m_OldReflectionTextureSize != m_TextureSize || oldTextureDownsample != textureDownsample)
+        {
+            if (m_ReflectionTexture)
                 DestroyImmediate(m_ReflectionTexture);
             m_ReflectionTexture = new RenderTexture(Mathf.RoundToInt(m_TextureSize * textureDownsample), Mathf.RoundToInt(m_TextureSize * textureDownsample), 16);
             m_ReflectionTexture.hideFlags = HideFlags.HideAndDontSave;
@@ -175,7 +189,8 @@ public class WetSurface : MonoBehaviour {
         }
 
         reflectionCamera = m_ReflectionCameras[currentCamera] as Camera;
-        if(!reflectionCamera) {
+        if (!reflectionCamera)
+        {
             GameObject go = new GameObject("R" + Random.value, typeof(Camera));
             reflectionCamera = go.GetComponent<Camera>();
             reflectionCamera.enabled = false;
@@ -187,18 +202,21 @@ public class WetSurface : MonoBehaviour {
         }
     }
 
-    private void FindHardwareWaterSupport() {
-        if(!SystemInfo.supportsRenderTextures || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial)
+    private void FindHardwareWaterSupport()
+    {
+        if (!SystemInfo.supportsRenderTextures || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial)
             this.enabled = false;
     }
 
-    private static float sgn(float a) {
-        if(a > 0.0f) return 1.0f;
-        if(a < 0.0f) return -1.0f;
+    private static float sgn(float a)
+    {
+        if (a > 0.0f) return 1.0f;
+        if (a < 0.0f) return -1.0f;
         return 0.0f;
     }
 
-    private Vector4 CameraSpacePlane(Camera cam, Vector3 pos, Vector3 normal, float sideSign) {
+    private Vector4 CameraSpacePlane(Camera cam, Vector3 pos, Vector3 normal, float sideSign)
+    {
         Vector3 offsetPos = pos + normal * m_ClipPlaneOffset;
         Matrix4x4 m = cam.worldToCameraMatrix;
         Vector3 cpos = m.MultiplyPoint(offsetPos);
@@ -206,7 +224,8 @@ public class WetSurface : MonoBehaviour {
         return new Vector4(cnormal.x, cnormal.y, cnormal.z, -Vector3.Dot(cpos, cnormal));
     }
 
-    private static void CalculateObliqueMatrix(ref Matrix4x4 projection, Vector4 clipPlane) {
+    private static void CalculateObliqueMatrix(ref Matrix4x4 projection, Vector4 clipPlane)
+    {
         Vector4 q = projection.inverse * new Vector4(
             sgn(clipPlane.x),
             sgn(clipPlane.y),
@@ -221,7 +240,8 @@ public class WetSurface : MonoBehaviour {
         projection[14] = c.w - projection[15];
     }
 
-    private static void CalculateReflectionMatrix(ref Matrix4x4 reflectionMat, Vector4 plane) {
+    private static void CalculateReflectionMatrix(ref Matrix4x4 reflectionMat, Vector4 plane)
+    {
         reflectionMat.m00 = (1F - 2F * plane[0] * plane[0]);
         reflectionMat.m01 = (-2F * plane[0] * plane[1]);
         reflectionMat.m02 = (-2F * plane[0] * plane[2]);

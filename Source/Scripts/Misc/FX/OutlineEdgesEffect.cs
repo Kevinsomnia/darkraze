@@ -2,7 +2,8 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class OutlineEdgesEffect : MonoBehaviour {
+public class OutlineEdgesEffect : MonoBehaviour
+{
     public Shader shader;
     public float threshold = 0.5f;
     public float edgeWidth = 1f;
@@ -20,9 +21,12 @@ public class OutlineEdgesEffect : MonoBehaviour {
     private float randomNoise;
 
     private Material mat;
-    private Material curMaterial {
-        get {
-            if(mat == null) {
+    private Material curMaterial
+    {
+        get
+        {
+            if (mat == null)
+            {
                 mat = new Material(shader);
                 mat.hideFlags = HideFlags.HideAndDontSave;
             }
@@ -31,8 +35,10 @@ public class OutlineEdgesEffect : MonoBehaviour {
         }
     }
 
-    void Start() {
-        if(!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures) {
+    void Start()
+    {
+        if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
+        {
             enabled = false;
             return;
         }
@@ -40,29 +46,36 @@ public class OutlineEdgesEffect : MonoBehaviour {
         lastNoiseTime = -100f;
     }
 
-    void OnDisable() {
-        if(mat != null) {
+    void OnDisable()
+    {
+        if (mat != null)
+        {
             DestroyImmediate(mat);
         }
     }
 
-    void OnRenderImage(RenderTexture source, RenderTexture destination) {
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         curMaterial.SetFloat("_Threshold", threshold);
         curMaterial.SetFloat("_BackgroundBrightness", backgroundBrightness);
         curMaterial.SetVector("_ColorTint", colorTint);
         curMaterial.SetFloat("_EdgeIntensity", edgeIntensity);
         curMaterial.SetFloat("_EdgeWidth", edgeWidth);
 
-        if(grainIntensity > 0f && grainTexture != null) {
+        if (grainIntensity > 0f && grainTexture != null)
+        {
             grainTexture.filterMode = filterMode;
             curMaterial.SetTexture("_GrainTex", grainTexture);
             float grainScale = 1.0f / grainSize;
 
-            if(Application.isEditor && !Application.isPlaying) {
+            if (Application.isEditor && !Application.isPlaying)
+            {
                 curMaterial.SetVector("_GrainOffsetScale", new Vector4(0f, 0f, (float)Screen.width / (float)grainTexture.width * grainScale, (float)Screen.height / (float)grainTexture.height * grainScale));
             }
-            else {
-                if(Time.time - lastNoiseTime >= (1f / (float)Mathf.Max(1, updateFPS))) {
+            else
+            {
+                if (Time.time - lastNoiseTime >= (1f / (float)Mathf.Max(1, updateFPS)))
+                {
                     curMaterial.SetVector("_GrainOffsetScale", new Vector4(Random.value, Random.value, grainScale, grainScale));
                     randomNoise = Random.value * grainIntensityRandom;
                     lastNoiseTime = Time.time;
@@ -71,7 +84,8 @@ public class OutlineEdgesEffect : MonoBehaviour {
 
             curMaterial.SetFloat("_GrainIntensity", grainIntensity + grainIntensityRandom);
         }
-        else {
+        else
+        {
             curMaterial.SetFloat("_GrainIntensity", 0f);
         }
 

@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
-	public Transform weaponsParent;
+public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour
+{
+    public Transform weaponsParent;
     public AudioClip drawSound;
     public VisibilityControl renderV;
     public GameObject meleeObject;
@@ -13,10 +14,10 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
     [HideInInspector] public GunVisuals currentVisuals;
     [HideInInspector] public GrenadeHandler_Proxy currentGHP;
     [HideInInspector] public List<PlasticExplosive> detonationList = new List<PlasticExplosive>();
-	
+
     private MovementSync_Proxy msP;
-	private Animator animator;
-	private bool changingWeapons = false;
+    private Animator animator;
+    private bool changingWeapons = false;
     private float muzzleBrightness;
     private float targetFireRate;
     private float lastFireTime;
@@ -28,136 +29,163 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
     private AudioClip pullPinSound;
     private AudioClip throwSound;
 
-    void Awake() {
+    void Awake()
+    {
         lastFireTime = -100f;
     }
 
-	void NetworkStart() {
+    void NetworkStart()
+    {
         msP = GetComponent<MovementSync_Proxy>();
-		animator = GetComponent<Animator>();
-	}
-	
-	[RPC]
-	void NetworkShoot(float x, float y, Vector3 pos) {
-		if(currentGC == null) {
-            Debug.Log("Proxy gun is null");
-			return;
-		}
+        animator = GetComponent<Animator>();
+    }
 
-        if(Time.time - lastFireTime >= targetFireRate * 0.2f) {
-            currentGC.firePos.GetComponent<AudioSource>().PlayOneShot(currentGC.fireSound);
-            lastFireTime = Time.time;
-        }
-
-		GameObject poolProjectile = PoolManager.Instance.RequestInstantiate(currentGC.bulletInfo.poolIndex, pos, Quaternion.Euler(x * 360f, y * 360f, 0f), false);
-
-		if(currentGC.bulletInfo.bulletType == BulletInfo.BulletType.Bullet) {
-			Bullet bTracer = poolProjectile.GetComponent<Bullet>();
-			bTracer.BulletInfo(currentGC.bulletInfo, -1, true);
-			bTracer.InstantiateStart();
-		}
-		else if(currentGC.bulletInfo.bulletType == BulletInfo.BulletType.Rocket) {
-			Rocket vRocket = poolProjectile.GetComponent<Rocket>();
-			vRocket.RocketInfo(currentGC.bulletInfo, -1, true);
-			vRocket.InstantiateStart();
-		}
-
-        if(renderV.isVisible && currentGC.ejectionEnabled && currentGC.ejectionPos != null) {
-		    Rigidbody bShell = PoolManager.Instance.RequestInstantiate(currentGC.bulletShellIndex, currentGC.ejectionPos.position, currentGC.ejectionPos.rotation).GetComponent<Rigidbody>();
-			Vector3 randomForce = DarkRef.RandomVector3(currentGC.ejectionMinForce, currentGC.ejectionMaxForce);
-			bShell.velocity = msP.velocity + transform.TransformDirection(randomForce);
-            bShell.angularVelocity = Random.rotation.eulerAngles * currentGC.ejectionRotation;
-        }
-
-        if(currentVisuals.muzzleFlash != null && currentVisuals.muzzleGlow != null && currentVisuals.muzzleSpark != null) {
-            StartCoroutine(MuzzleControl());
-        }
-	}
-	
-	[RPC]
-	void NetworkReload(bool isEmpty) {
-        if(currentGC == null) {
+    [RPC]
+    void NetworkShoot(float x, float y, Vector3 pos)
+    {
+        if (currentGC == null)
+        {
             Debug.Log("Proxy gun is null");
             return;
         }
 
-		currentGC.firePos.GetComponent<AudioSource>().PlayOneShot((isEmpty && currentGC.reloadSoundEmpty != null) ? currentGC.reloadSoundEmpty : currentGC.reloadSound, 0.3f);
-		//third person reload animations, etc...
-	}
-	
-	private IEnumerator MuzzleControl() {
-		if(Random.value < currentGC.muzzleProbability) {
-			currentVisuals.muzzleFlash.Emit(1);
-		    currentVisuals.muzzleGlow.Emit(1);
-			currentVisuals.muzzleSpark.Emit(1);
+        if (Time.time - lastFireTime >= targetFireRate * 0.2f)
+        {
+            currentGC.firePos.GetComponent<AudioSource>().PlayOneShot(currentGC.fireSound);
+            lastFireTime = Time.time;
+        }
+
+        GameObject poolProjectile = PoolManager.Instance.RequestInstantiate(currentGC.bulletInfo.poolIndex, pos, Quaternion.Euler(x * 360f, y * 360f, 0f), false);
+
+        if (currentGC.bulletInfo.bulletType == BulletInfo.BulletType.Bullet)
+        {
+            Bullet bTracer = poolProjectile.GetComponent<Bullet>();
+            bTracer.BulletInfo(currentGC.bulletInfo, -1, true);
+            bTracer.InstantiateStart();
+        }
+        else if (currentGC.bulletInfo.bulletType == BulletInfo.BulletType.Rocket)
+        {
+            Rocket vRocket = poolProjectile.GetComponent<Rocket>();
+            vRocket.RocketInfo(currentGC.bulletInfo, -1, true);
+            vRocket.InstantiateStart();
+        }
+
+        if (renderV.isVisible && currentGC.ejectionEnabled && currentGC.ejectionPos != null)
+        {
+            Rigidbody bShell = PoolManager.Instance.RequestInstantiate(currentGC.bulletShellIndex, currentGC.ejectionPos.position, currentGC.ejectionPos.rotation).GetComponent<Rigidbody>();
+            Vector3 randomForce = DarkRef.RandomVector3(currentGC.ejectionMinForce, currentGC.ejectionMaxForce);
+            bShell.velocity = msP.velocity + transform.TransformDirection(randomForce);
+            bShell.angularVelocity = Random.rotation.eulerAngles * currentGC.ejectionRotation;
+        }
+
+        if (currentVisuals.muzzleFlash != null && currentVisuals.muzzleGlow != null && currentVisuals.muzzleSpark != null)
+        {
+            StartCoroutine(MuzzleControl());
+        }
+    }
+
+    [RPC]
+    void NetworkReload(bool isEmpty)
+    {
+        if (currentGC == null)
+        {
+            Debug.Log("Proxy gun is null");
+            return;
+        }
+
+        currentGC.firePos.GetComponent<AudioSource>().PlayOneShot((isEmpty && currentGC.reloadSoundEmpty != null) ? currentGC.reloadSoundEmpty : currentGC.reloadSound, 0.3f);
+        //third person reload animations, etc...
+    }
+
+    private IEnumerator MuzzleControl()
+    {
+        if (Random.value < currentGC.muzzleProbability)
+        {
+            currentVisuals.muzzleFlash.Emit(1);
+            currentVisuals.muzzleGlow.Emit(1);
+            currentVisuals.muzzleSpark.Emit(1);
 
             currentGC.muzzleLight.enabled = true;
             currentGC.muzzleLight.range = Random.Range(3f, 4f);
 
             lightTime = 0f;
             float randomIntensity = Random.Range(0.9f, 1.1f);
-            while(lightTime < 2f && currentGC.muzzleLight != null) {
+            while (lightTime < 2f && currentGC.muzzleLight != null)
+            {
                 lightTime += Time.deltaTime * 25f;
                 currentGC.muzzleLight.intensity = Mathf.PingPong(Mathf.Clamp(lightTime, 0f, 2f), 1f) * muzzleBrightness * randomIntensity;
                 yield return 0;
             }
 
             currentGC.muzzleLight.intensity = 0f;
-		}
+        }
 
-        if(currentVisuals.muzzleSmoke != null) {
+        if (currentVisuals.muzzleSmoke != null)
+        {
             currentVisuals.muzzleSmoke.Emit(1);
         }
-	}
-	
-	private IEnumerator SelectWeaponRoutine(int id, int drawType) {
-		changingWeapons = true;
+    }
 
-		animator.SetBool("Draw", true);
-		bool setDrawToFalse = false;
-		while(!setDrawToFalse && animator != null) {
-			if(animator.IsInTransition(2)){
-				AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(2);
-							
-				if(state.IsName("Torso.Hide")) {
-					animator.SetBool("Draw", false);
-					setDrawToFalse = true;
-				}
-			}
+    private IEnumerator SelectWeaponRoutine(int id, int drawType)
+    {
+        changingWeapons = true;
 
-			yield return null;	
-		}
-		
-		foreach(Transform child in weaponsParent) {
-			Destroy(child.gameObject);	
-		}
+        animator.SetBool("Draw", true);
+        bool setDrawToFalse = false;
+        while (!setDrawToFalse && animator != null)
+        {
+            if (animator.IsInTransition(2))
+            {
+                AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(2);
 
-        if(drawType == 0) {
+                if (state.IsName("Torso.Hide"))
+                {
+                    animator.SetBool("Draw", false);
+                    setDrawToFalse = true;
+                }
+            }
+
+            yield return null;
+        }
+
+        foreach (Transform child in weaponsParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        if (drawType == 0)
+        {
             DrawWeapon(id);
         }
-        else if(drawType == 1) {
+        else if (drawType == 1)
+        {
             DrawGrenade(id);
         }
-        else if(drawType == 2) {
+        else if (drawType == 2)
+        {
             DrawSpecial(id);
         }
-		
-		bool gotDraw = false;
-        while(!gotDraw && animator != null) {
-            if(animator.IsInTransition(2)) {
-				AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(2);
-							
-				if(state.IsName("Torso.Draw")) {
-					gotDraw = true;
-				}
-			}
-			yield return null;	
-		}
-		
-		changingWeapons = false;
-	}
 
-    private void DrawWeapon(int weaponID) {
+        bool gotDraw = false;
+        while (!gotDraw && animator != null)
+        {
+            if (animator.IsInTransition(2))
+            {
+                AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(2);
+
+                if (state.IsName("Torso.Draw"))
+                {
+                    gotDraw = true;
+                }
+            }
+            yield return null;
+        }
+
+        changingWeapons = false;
+    }
+
+    private void DrawWeapon(int weaponID)
+    {
         meleeObject.SetActive(false);
 
         GunController toInstantiate = WeaponDatabase.GetWeaponByID(weaponID);
@@ -175,8 +203,10 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
         pullPinSound = null;
         throwSound = null;
 
-        if(currentVisuals) {
-            foreach(GameObject go in currentVisuals.activateOnUse) {
+        if (currentVisuals)
+        {
+            foreach (GameObject go in currentVisuals.activateOnUse)
+            {
                 go.SetActive(false);
             }
 
@@ -184,7 +214,8 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
         }
     }
 
-    private void DrawGrenade(int grenadeID) {
+    private void DrawGrenade(int grenadeID)
+    {
         meleeObject.SetActive(false);
 
         GrenadeController toInstantiate = GrenadeDatabase.GetGrenadeByID(grenadeID);
@@ -212,31 +243,39 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
         currentVisuals = null;
     }
 
-    private void DrawSpecial(int specialID) {
-        if(specialID == 0) {
+    private void DrawSpecial(int specialID)
+    {
+        if (specialID == 0)
+        {
             //Drawing Hands
         }
-        else if(specialID == 1) {
+        else if (specialID == 1)
+        {
             meleeObject.SetActive(true);
         }
     }
 
-	public void DestroyWeapons() {
-		for(int i = 0; i < weaponsParent.childCount; i++) {
-			Destroy(weaponsParent.GetChild(i).gameObject);
-		}
-	}
+    public void DestroyWeapons()
+    {
+        for (int i = 0; i < weaponsParent.childCount; i++)
+        {
+            Destroy(weaponsParent.GetChild(i).gameObject);
+        }
+    }
 
     #region Explosive RPCs
     [RPC]
-    void NetworkSelectGrenade(byte grenadeID) {
+    void NetworkSelectGrenade(byte grenadeID)
+    {
         StopCoroutine("SelectWeaponRoutine");
         StartCoroutine(SelectWeaponRoutine((int)grenadeID, 1));
     }
 
     [RPC]
-    void PullPinGrenade(int grenadeID) {
-        if(currentGHP == null) {
+    void PullPinGrenade(int grenadeID)
+    {
+        if (currentGHP == null)
+        {
             Debug.Log("Grenade handler is null");
             return;
         }
@@ -245,8 +284,10 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
     }
 
     [RPC]
-    void ThrowGrenade(Vector3 direction, Vector3 position) {
-        if(currentGHP == null) {
+    void ThrowGrenade(Vector3 direction, Vector3 position)
+    {
+        if (currentGHP == null)
+        {
             Debug.Log("Grenade handler is null");
             return;
         }
@@ -255,56 +296,68 @@ public class WeaponHandler_Proxy : Topan.TopanMonoBehaviour {
     }
 
     [RPC]
-    void DetonateExplosives() {
+    void DetonateExplosives()
+    {
         GetComponent<AudioSource>().PlayOneShot(pullPinSound); //Detonation sound.
 
-        for(int i = 0; i < detonationList.Count; i++) {
+        for (int i = 0; i < detonationList.Count; i++)
+        {
             detonationList[i].Detonate(baseDelay + (i * detonationDelay));
         }
 
         detonationList.Clear();
     }
-	#endregion
-
-	[RPC]
-	void RefreshWeapon(byte weaponID) {
-        StopCoroutine("SelectWeaponRoutine");
-        StartCoroutine(SelectWeaponRoutine((int)weaponID, 0));
-	}
+    #endregion
 
     [RPC]
-    void SetSpecialActive(byte specialID) {
+    void RefreshWeapon(byte weaponID)
+    {
+        StopCoroutine("SelectWeaponRoutine");
+        StartCoroutine(SelectWeaponRoutine((int)weaponID, 0));
+    }
+
+    [RPC]
+    void SetSpecialActive(byte specialID)
+    {
         StopCoroutine("SelectWeaponRoutine");
         StartCoroutine(SelectWeaponRoutine((int)specialID, 2));
     }
-	
-	[RPC]
-	void SetFlashlight(bool on) {		
-		if(currentVisuals != null && currentVisuals.flashlight != null) {
-			StartCoroutine(FlashlightRoutine(on));
-		}
-	}
-	
-	private IEnumerator FlashlightRoutine(bool on) {
-		while(changingWeapons) {
-			yield return null;
-		}
-		
-		currentVisuals.flashlight.enabled = on;
-	}
 
     [RPC]
-	void NetworkEmptyClick() {
-		if(currentGC == null) {
+    void SetFlashlight(bool on)
+    {
+        if (currentVisuals != null && currentVisuals.flashlight != null)
+        {
+            StartCoroutine(FlashlightRoutine(on));
+        }
+    }
+
+    private IEnumerator FlashlightRoutine(bool on)
+    {
+        while (changingWeapons)
+        {
+            yield return null;
+        }
+
+        currentVisuals.flashlight.enabled = on;
+    }
+
+    [RPC]
+    void NetworkEmptyClick()
+    {
+        if (currentGC == null)
+        {
             Debug.Log("Proxy gun is null");
-			return;
-		}
+            return;
+        }
 
-		currentGC.firePos.GetComponent<AudioSource>().PlayOneShot(currentGC.emptySound, 0.4f);
-	}
+        currentGC.firePos.GetComponent<AudioSource>().PlayOneShot(currentGC.emptySound, 0.4f);
+    }
 
-    public void DeleteInactiveExplosives(float delay) {
-        for(int i = 0; i < detonationList.Count; i++) {
+    public void DeleteInactiveExplosives(float delay)
+    {
+        for (int i = 0; i < detonationList.Count; i++)
+        {
             detonationList[i].RemoveInstance(delay);
         }
     }

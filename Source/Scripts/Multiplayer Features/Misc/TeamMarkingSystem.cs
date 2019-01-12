@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TeamMarkingSystem : MonoBehaviour {
+public class TeamMarkingSystem : MonoBehaviour
+{
     public TeammateMarker markerPrefab;
     public Transform markerRoot;
 
@@ -10,21 +11,25 @@ public class TeamMarkingSystem : MonoBehaviour {
     private int oldPlayerCount;
     private List<TeammateMarker> teamMarkers;
 
-    void Start() {
+    void Start()
+    {
         nGen = GeneralVariables.Networking;
         teamMarkers = new List<TeammateMarker>();
     }
 
-    public void AddPlayerMarker(int id, bool isBot = false) {
+    public void AddPlayerMarker(int id, bool isBot = false)
+    {
         TeammateMarker tMarker = (TeammateMarker)Instantiate(markerPrefab);
         tMarker.transform.parent = markerRoot;
         tMarker.transform.localPosition = Vector3.zero;
         tMarker.transform.localScale = Vector3.one;
 
-        if(!isBot) {
+        if (!isBot)
+        {
             tMarker.targetObserver = nGen.playerInstances[id];
         }
-        else {
+        else
+        {
             tMarker.targetObserver = nGen.botInstances[id];
         }
 

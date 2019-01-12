@@ -2,7 +2,8 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class Sun : MonoBehaviour {
+public class Sun : MonoBehaviour
+{
     public Skydome skydome;
 
     private float LATITUDE_RADIANS;
@@ -16,8 +17,10 @@ public class Sun : MonoBehaviour {
     private float theta;
     private float phi;
 
-    void Update() {
-        if(skydome == null) {
+    void Update()
+    {
+        if (skydome == null)
+        {
             return;
         }
 
@@ -25,7 +28,8 @@ public class Sun : MonoBehaviour {
         SetPosition(skydome.time + 1f);
     }
 
-    private void SetPosition(float fTheta, float fPhi) {
+    private void SetPosition(float fTheta, float fPhi)
+    {
         theta = fTheta;
         phi = fPhi;
 
@@ -43,7 +47,8 @@ public class Sun : MonoBehaviour {
         ComputeAttenuation();
     }
 
-    private void SetPosition(float fTime) {
+    private void SetPosition(float fTime)
+    {
         LATITUDE_RADIANS = Mathf.Deg2Rad * skydome.latitude;
         STD_MERIDIAN = skydome.meridian * 15.0f;
 
@@ -72,7 +77,8 @@ public class Sun : MonoBehaviour {
         SetPosition(fTheta, fPhi);
     }
 
-    private Vector3 calcDirection(float thetaSun, float phiSun) {
+    private Vector3 calcDirection(float thetaSun, float phiSun)
+    {
         Vector3 dir = new Vector3();
         dir.x = Mathf.Cos(0.5f * Mathf.PI - thetaSun) * Mathf.Cos(phiSun);
         dir.y = Mathf.Sin(0.5f * Mathf.PI - thetaSun);
@@ -80,19 +86,22 @@ public class Sun : MonoBehaviour {
         return dir.normalized;
     }
 
-    private void ComputeAttenuation() {
+    private void ComputeAttenuation()
+    {
         float fBeta = 0.0460836f * skydome.turbidity - 0.0458602f;
         float fTauR, fTauA;
         float[] fTau = new float[3];
         float tmp = 93.885f - (theta / Mathf.PI * 180.0f);
 
         float m = 1.0f / (Mathf.Cos(theta) + 0.15f * tmp);  // Relative Optical Mass
-        if(m < 0) {
+        if (m < 0)
+        {
             m = 20;
         }
 
-        float[] fLambda = new float[3] {0.65f, 0.57f, 0.475f}; // red, green, blue (in um.)
-        for(int i = 0; i < 3; i++) {
+        float[] fLambda = new float[3] { 0.65f, 0.57f, 0.475f }; // red, green, blue (in um.)
+        for (int i = 0; i < 3; i++)
+        {
             fTauR = Mathf.Exp(-m * 0.008735f * Mathf.Pow(fLambda[i], -4.08f));
             const float fAlpha = 1.3f;
             fTauA = Mathf.Exp(-m * fBeta * Mathf.Pow(fLambda[i], -fAlpha));  // lambda should be in um
@@ -101,7 +110,8 @@ public class Sun : MonoBehaviour {
 
         color = new Vector3(fTau[0], fTau[1], fTau[2]);
 
-        if(skydome.autoComputeLightColor) {
+        if (skydome.autoComputeLightColor)
+        {
             GetComponent<Light>().color = new Color(fTau[0], fTau[1], fTau[2]);
         }
     }

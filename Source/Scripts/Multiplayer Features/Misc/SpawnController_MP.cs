@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SpawnController_MP : MonoBehaviour {
+public class SpawnController_MP : MonoBehaviour
+{
     public bool inSpawnScreen = false;
 
     public Camera spectatorCamera;
@@ -36,9 +37,12 @@ public class SpawnController_MP : MonoBehaviour {
     [HideInInspector] public float blurREM = 0f;
 
     private Topan.NetworkView _snv;
-    private Topan.NetworkView spawnNetView {
-        get {
-            if(_snv == null && GeneralVariables.Networking != null) {
+    private Topan.NetworkView spawnNetView
+    {
+        get
+        {
+            if (_snv == null && GeneralVariables.Networking != null)
+            {
                 _snv = Topan.Network.GetNetworkView(GeneralVariables.Networking.gameObject);
             }
 
@@ -60,7 +64,8 @@ public class SpawnController_MP : MonoBehaviour {
     private float autoSpectateTimer;
     private int specIndex = 0;
 
-    void Awake() {
+    void Awake()
+    {
         GeneralVariables.spawnController = this;
         GeneralVariables.uiController.Awake();
 
@@ -71,11 +76,13 @@ public class SpawnController_MP : MonoBehaviour {
         distortTransition = spectatorCamera.GetComponent<DistortionEffect>();
 
         GameObject specRoot = GameObject.FindGameObjectWithTag("SpectatorRoot");
-        if(specRoot != null) {
+        if (specRoot != null)
+        {
             spectatorRoot = specRoot.transform;
 
             spectatorPositions = new List<Transform>();
-            foreach(Transform t in spectatorRoot) {
+            foreach (Transform t in spectatorRoot)
+            {
                 spectatorPositions.Add(t);
             }
 
@@ -92,14 +99,17 @@ public class SpawnController_MP : MonoBehaviour {
         autoSpectateTimer = Time.time;
     }
 
-    void Start() {
-        if(Topan.Network.isConnected) {
+    void Start()
+    {
+        if (Topan.Network.isConnected)
+        {
             GeneralVariables.Networking.spawnControl = this;
         }
 
         primarySelection.items.Clear();
         secondarySelection.items.Clear();
-        for(int i = 0; i < WeaponDatabase.publicGunControllers.Length; i++) {
+        for (int i = 0; i < WeaponDatabase.publicGunControllers.Length; i++)
+        {
             GunController sGun = WeaponDatabase.publicGunControllers[i];
             primarySelection.items.Add(sGun.gunName);
             secondarySelection.items.Add(sGun.gunName);
@@ -111,7 +121,8 @@ public class SpawnController_MP : MonoBehaviour {
         mpGUI = GeneralVariables.multiplayerGUI;
     }
 
-    void Update() {
+    void Update()
+    {
         uiCam.enabled = !GameManager.isPaused && !RoundEndManager.isRoundEnded;
         chatOutput.alpha = 1f - blackSprite.alpha;
         uiCam.GetComponent<BlurEffect>().blurSpread = blurREM;
@@ -134,40 +145,51 @@ public class SpawnController_MP : MonoBehaviour {
                                                     + "||" + "Effective Range: " + secondaryWep.GetMinimumRange() + "-" + secondaryWep.GetMaximumRange() + "m"
                                                     + "||" + "Weight: " + secondaryWep.weaponWeight.ToString("F2") + " kg";
 
-        if(GeneralVariables.gameModeHasTeams) {
-            if(spectateFollow.target == null) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
+            if (spectateFollow.target == null)
+            {
                 GetAllTeamInstances();
             }
-            else {
+            else
+            {
                 Rigidbody theRigid = spectateFollow.target.GetComponent<Rigidbody>();
-                if(theRigid != null && !theRigid.isKinematic) {
+                if (theRigid != null && !theRigid.isKinematic)
+                {
                     spectateFollow.target = null;
                     GetAllTeamInstances();
                 }
             }
         }
 
-        if(mpGUI != null) {
+        if (mpGUI != null)
+        {
             timeLabel.color = mpGUI.timerLabels[0].color;
-            if(GeneralVariables.Networking.countingDown) {
+            if (GeneralVariables.Networking.countingDown)
+            {
                 timeLabel.text = "MATCH STARTING: " + GeneralVariables.Networking.countdown.ToString();
             }
-            else {
-                if(mpGUI.timerLabels[0].text == "--") {
+            else
+            {
+                if (mpGUI.timerLabels[0].text == "--")
+                {
                     timeLabel.text = "WAITING FOR: " + mpGUI.serverPL.ToString() + " player" + ((mpGUI.serverPL == 1) ? "" : "s");
                 }
-                else {
+                else
+                {
                     timeLabel.text = mpGUI.timerLabels[0].text + ":" + mpGUI.timerLabels[1].text;
                 }
             }
 
-            if(GeneralVariables.gameModeHasTeams) {
+            if (GeneralVariables.gameModeHasTeams)
+            {
                 redTitle.text = "RED TEAM";
                 blueTitle.text = "BLUE TEAM";
             }
-            else {
+            else
+            {
                 redTitle.text = (mpGUI.youAreWinning) ? "YOU" : mpGUI.winningPlayerName.ToUpper();
-                blueTitle.text = (mpGUI.youAreWinning) ? mpGUI.runnerUpName.ToUpper() : "YOU"; 
+                blueTitle.text = (mpGUI.youAreWinning) ? mpGUI.runnerUpName.ToUpper() : "YOU";
             }
 
             redTeamProgress.value = mpGUI.redTeamProgress.value;
@@ -178,20 +200,24 @@ public class SpawnController_MP : MonoBehaviour {
             blueTeamValue.text = mpGUI.blueTeamValue.text;
         }
 
-        if(Topan.Network.isConnected && GeneralVariables.Networking != null) {
+        if (Topan.Network.isConnected && GeneralVariables.Networking != null)
+        {
             string suffix = "ready";
             int playersWaiting = Topan.Network.connectedPlayers.Length;
-            if(GeneralVariables.Networking.matchStarted) {
+            if (GeneralVariables.Networking.matchStarted)
+            {
                 matchStatus.text = "BATTLE INITIATED";
                 matchStatus.alpha = matchStatus.defaultAlpha;
                 suffix = "in battle";
             }
-            else {
+            else
+            {
                 matchStatus.text = "BATTLE AWAITING";
                 matchStatus.alpha = (matchStatus.defaultAlpha - 0.2f) + Mathf.PingPong(Time.time * 2f * 0.2f, 0.2f);
                 playersWaiting = Mathf.CeilToInt(playersWaiting * 0.25f);
 
-                if(Topan.Network.HasServerInfo("pl")) {
+                if (Topan.Network.HasServerInfo("pl"))
+                {
                     playersWaiting -= (int)((byte)Topan.Network.GetServerInfo("pl"));
                 }
             }
@@ -201,19 +227,23 @@ public class SpawnController_MP : MonoBehaviour {
                                 Mathf.Max(0, playersWaiting).ToString() + " combatant" + ((playersWaiting == 0 || playersWaiting > 1) ? "s " : " ") + suffix;
         }
 
-        if(spectatorPositions != null && spectatorPositions.Count > 0) {
-            if(Input.GetKeyDown(KeyCode.Space) && !RestrictionManager.restricted && UICamera.selectedObject == null && !isTransitioning) {
+        if (spectatorPositions != null && spectatorPositions.Count > 0)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !RestrictionManager.restricted && UICamera.selectedObject == null && !isTransitioning)
+            {
                 autoSpectate = false;
                 StartCoroutine(TransitionToIndex(specIndex + 1));
             }
 
-            if(autoSpectate && Time.time - autoSpectateTimer >= spectateCycleInterval && specIndex < spectatorPositions.Count && spectatorPositions.Count > 1 && !isTransitioning) {
+            if (autoSpectate && Time.time - autoSpectateTimer >= spectateCycleInterval && specIndex < spectatorPositions.Count && spectatorPositions.Count > 1 && !isTransitioning)
+            {
                 int newRandomPoint = 0;
 
-                do {
+                do
+                {
                     newRandomPoint = Random.Range(0, spectatorPositions.Count);
                 }
-                while(newRandomPoint == specIndex);
+                while (newRandomPoint == specIndex);
 
                 autoSpectateTimer = Time.time;
                 StartCoroutine(TransitionToIndex(newRandomPoint));
@@ -221,14 +251,16 @@ public class SpawnController_MP : MonoBehaviour {
 
             specIndex = Mathf.Clamp(specIndex, 0, spectatorPositions.Count + myAvailableTeamList.Count - 1);
 
-            if(specIndex >= spectatorPositions.Count && myAvailableTeamList.Count > 0) {
+            if (specIndex >= spectatorPositions.Count && myAvailableTeamList.Count > 0)
+            {
                 spectateFollow.enabled = true;
                 spectateFollow.offset = Vector3.up * 0.8f;
                 spectateFollow.target = myAvailableTeamList[specIndex - spectatorPositions.Count];
                 spectateLabel.text = "Spectating: " + myAvailableTeamList[specIndex - spectatorPositions.Count].root.name;
                 spectateNote.text = "[SPACE] to switch cameras" + "\n" + "[RMB] to rotate camera";
             }
-            else {
+            else
+            {
                 spectateFollow.enabled = false;
                 spectateFollow.target = null;
 
@@ -241,25 +273,30 @@ public class SpawnController_MP : MonoBehaviour {
         }
     }
 
-    public void SpawnPlayer() {
-        if(Topan.Network.isConnected && spawnNetView != null && !isFading) {
+    public void SpawnPlayer()
+    {
+        if (Topan.Network.isConnected && spawnNetView != null && !isFading)
+        {
             StartCoroutine(SpawnCoroutine());
         }
     }
 
-    private IEnumerator SpawnCoroutine() {
+    private IEnumerator SpawnCoroutine()
+    {
         WeaponManager.mpSpawnStartPrimary = primarySelection.selectionIndex;
         WeaponManager.mpSpawnStartSecondary = secondarySelection.selectionIndex;
 
         isFading = true;
-        while(blackSprite.alpha < 1f) {
+        while (blackSprite.alpha < 1f)
+        {
             blackSprite.alpha = Mathf.MoveTowards(blackSprite.alpha, 1f, Time.deltaTime * 3f);
             yield return null;
         }
 
         inSpawnScreen = false;
         spawnNetView.RPC(Topan.RPCMode.Server, "RequestInstantiate", (byte)Topan.Network.player.id);
-        while(GeneralVariables.player == null) {
+        while (GeneralVariables.player == null)
+        {
             yield return null;
         }
 
@@ -269,15 +306,19 @@ public class SpawnController_MP : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
-    private void GetAllTeamInstances() {
+    private void GetAllTeamInstances()
+    {
         myAvailableTeamList.Clear();
 
         byte myTeam = (byte)Topan.Network.player.GetPlayerData("team");
-        for(int i = 0; i < GeneralVariables.Networking.availablePlayers.Length; i++) {
+        for (int i = 0; i < GeneralVariables.Networking.availablePlayers.Length; i++)
+        {
             Transform thisPlayer = GeneralVariables.Networking.availablePlayers[i];
-            if(thisPlayer.childCount >= 2 && thisPlayer.GetComponent<MovementSync_Proxy>() != null && thisPlayer.GetComponent<MovementSync_Proxy>().playerTeam == myTeam) {
+            if (thisPlayer.childCount >= 2 && thisPlayer.GetComponent<MovementSync_Proxy>() != null && thisPlayer.GetComponent<MovementSync_Proxy>().playerTeam == myTeam)
+            {
                 Rigidbody rigid = thisPlayer.GetChild(1).GetComponent<Rigidbody>();
-                if(rigid != null && rigid.isKinematic) {
+                if (rigid != null && rigid.isKinematic)
+                {
                     myAvailableTeamList.Add(thisPlayer.GetChild(1));
                 }
             }
@@ -295,28 +336,33 @@ public class SpawnController_MP : MonoBehaviour {
         }*/
     }
 
-    private IEnumerator TransitionToIndex(int index) {
+    private IEnumerator TransitionToIndex(int index)
+    {
         isTransitioning = true;
         distortTransition.enabled = true;
 
         float timer = 0f;
-        while(timer < 0.25f) {
+        while (timer < 0.25f)
+        {
             timer += Time.deltaTime;
             distortTransition.baseIntensity = (timer / 0.25f) * 1.2f;
             yield return null;
         }
 
-        if(GeneralVariables.gameModeHasTeams) {
+        if (GeneralVariables.gameModeHasTeams)
+        {
             GetAllTeamInstances();
         }
 
         specIndex = index;
 
-        if(specIndex > spectatorPositions.Count + myAvailableTeamList.Count - 1) {
+        if (specIndex > spectatorPositions.Count + myAvailableTeamList.Count - 1)
+        {
             specIndex = 0;
         }
 
-        while(timer < 0.5f) {
+        while (timer < 0.5f)
+        {
             timer += Time.deltaTime;
             distortTransition.baseIntensity = Mathf.Max(0f, ((0.5f - timer) / 0.25f) * 1.2f);
             yield return null;
@@ -327,19 +373,24 @@ public class SpawnController_MP : MonoBehaviour {
         isTransitioning = false;
     }
 
-    public void FadeInOut(bool fadeIn, float delay = 0f) {
-        if(fadeIn) {
-            if(Topan.Network.isConnected && myAvailableTeamList.Count > 0) {
+    public void FadeInOut(bool fadeIn, float delay = 0f)
+    {
+        if (fadeIn)
+        {
+            if (Topan.Network.isConnected && myAvailableTeamList.Count > 0)
+            {
                 specIndex = spectatorPositions.Count;
             }
 
-            if(specIndex < spectatorPositions.Count) {
+            if (specIndex < spectatorPositions.Count)
+            {
                 autoSpectate = true;
             }
 
             chatBox.UpdateChatList();
         }
-        else {
+        else
+        {
             autoSpectate = false;
         }
 
@@ -348,36 +399,44 @@ public class SpawnController_MP : MonoBehaviour {
         StartCoroutine(StartFade(fadeIn, delay));
     }
 
-    private IEnumerator StartFade(bool e, float d) {
+    private IEnumerator StartFade(bool e, float d)
+    {
         inSpawnScreen = e;
 
         blackSprite.alpha = (e) ? 1f : 0f;
 
-        if(d > 0f) {
+        if (d > 0f)
+        {
             yield return new WaitForSeconds(d);
         }
 
         Screen.lockCursor = false;
 
-        if(e) {
+        if (e)
+        {
             GeneralVariables.uiController.guiCamera.enabled = false;
             UICamera.selectedObject = null;
 
-            while(blackSprite.alpha > 0f) {
+            while (blackSprite.alpha > 0f)
+            {
                 blackSprite.alpha -= Time.unscaledDeltaTime * fadeSpeed;
 
-                if(isFading) {
+                if (isFading)
+                {
                     yield break;
                 }
 
                 yield return null;
             }
         }
-        else {
-            while(blackSprite.alpha < 1f) {
+        else
+        {
+            while (blackSprite.alpha < 1f)
+            {
                 blackSprite.alpha += Time.unscaledDeltaTime * fadeSpeed;
 
-                if(isFading) {
+                if (isFading)
+                {
                     yield break;
                 }
 
@@ -386,7 +445,8 @@ public class SpawnController_MP : MonoBehaviour {
         }
     }
 
-    public void AddToFeed(string killerName, string victimName, int weaponIndex) {
+    public void AddToFeed(string killerName, string victimName, int weaponIndex)
+    {
         killFeed.AddToFeed(killerName, victimName, weaponIndex);
     }
 }

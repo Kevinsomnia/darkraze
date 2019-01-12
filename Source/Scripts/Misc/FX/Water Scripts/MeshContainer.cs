@@ -1,17 +1,20 @@
 using UnityEngine;
 
-public class MeshContainer {
+public class MeshContainer
+{
     public Mesh mesh;
     public Vector3[] vertices;
     public Vector3[] normals;
-  
-    public MeshContainer(Mesh m) {
+
+    public MeshContainer(Mesh m)
+    {
         mesh = m;
         vertices = m.vertices;
         normals = m.normals;
     }
-  
-    public void Update() {
+
+    public void Update()
+    {
         mesh.vertices = vertices;
         mesh.normals = normals;
     }

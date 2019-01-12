@@ -3,23 +3,29 @@ using UnityEditor;
 using System.Collections;
 
 [CustomEditor(typeof(MapsList))]
-public class MapsListInspector : Editor {
+public class MapsListInspector : Editor
+{
     private int removeAt = 0;
 
-    public override void OnInspectorGUI() {
+    public override void OnInspectorGUI()
+    {
         MapsList ml = (MapsList)target;
 
         base.OnInspectorGUI();
 
         GUILayout.Space(10f);
 
-        if(ml.maps.Length > 0) {
+        if (ml.maps.Length > 0)
+        {
             EditorGUILayout.BeginHorizontal();
-            if(GUILayout.Button("Remove At", GUILayout.MaxWidth(85f))) {
+            if (GUILayout.Button("Remove At", GUILayout.MaxWidth(85f)))
+            {
                 Map[] newMaps = new Map[ml.maps.Length - 1];
                 int placementIndex = 0;
-                for(int i = 0; i < ml.maps.Length; i++) {
-                    if(removeAt == i) {
+                for (int i = 0; i < ml.maps.Length; i++)
+                {
+                    if (removeAt == i)
+                    {
                         continue;
                     }
 
@@ -40,7 +46,8 @@ public class MapsListInspector : Editor {
             EditorGUILayout.EndHorizontal();
         }
 
-        if(GUI.changed) {
+        if (GUI.changed)
+        {
             EditorUtility.SetDirty(ml);
         }
     }

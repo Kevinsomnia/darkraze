@@ -2,18 +2,22 @@
 using System.Collections;
 
 [RequireComponent(typeof(UILabel))]
-public class PlayerNameGUI : MonoBehaviour {
+public class PlayerNameGUI : MonoBehaviour
+{
     public string prefix = "VITALS PANEL ";
 
     private UILabel label;
 
-    void Start() {
+    void Start()
+    {
         label = GetComponent<UILabel>();
 
-        if(Topan.Network.isConnected) {
+        if (Topan.Network.isConnected)
+        {
             label.text = prefix + "[FF5040][" + AccountManager.profileData.username.ToUpper() + "][-]";
         }
-        else {
+        else
+        {
             label.text = prefix + "[FF5040][INFILTRATOR][-]";
         }
     }

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TextRevealEffect : MonoBehaviour {
+public class TextRevealEffect : MonoBehaviour
+{
     public string text = "";
     public float intervalTime = 0.1f; //10 times per second.
 
@@ -11,21 +12,25 @@ public class TextRevealEffect : MonoBehaviour {
     private string normalString;
     private string jumbledString;
 
-	void Awake() {
+    void Awake()
+    {
         label = GetComponent<UILabel>();
         nextTime = 0f;
         normalString = "";
         jumbledString = "";
 
-        if(text == "") {
+        if (text == "")
+        {
             text = label.text;
         }
 
         label.text = "";
-	}
-	
-	void Update() {
-        if(Time.time >= nextTime) {
+    }
+
+    void Update()
+    {
+        if (Time.time >= nextTime)
+        {
             curOffset++;
             curOffset = Mathf.Clamp(curOffset, 0, text.Length);
             normalString = text.Substring(0, curOffset);
@@ -34,11 +39,14 @@ public class TextRevealEffect : MonoBehaviour {
 
         jumbledString = "[969696]";
 
-        for(int i = curOffset; i < text.Length; i++) {
-            if(text[i] == ' ') {
+        for (int i = curOffset; i < text.Length; i++)
+        {
+            if (text[i] == ' ')
+            {
                 jumbledString += " ";
             }
-            else {
+            else
+            {
                 jumbledString += DarkRef.GetRandomLetter();
             }
         }
@@ -46,5 +54,5 @@ public class TextRevealEffect : MonoBehaviour {
         jumbledString += "[-]";
 
         label.text = normalString + jumbledString;
-	}
+    }
 }

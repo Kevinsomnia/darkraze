@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class Limb : MonoBehaviour {
+public class Limb : MonoBehaviour
+{
     [System.Serializable]
-    public class ExplosionVelocity {
-        public ExplosionVelocity(Vector3 pos, float velocity, float radius, float upwards) {
+    public class ExplosionVelocity
+    {
+        public ExplosionVelocity(Vector3 pos, float velocity, float radius, float upwards)
+        {
             origin = pos;
             forceAmount = velocity;
             forceRadius = radius;
@@ -17,22 +20,25 @@ public class Limb : MonoBehaviour {
         public float upwardForce;
     }
 
-	public enum LimbType {Head = 0, Chest = 1, Legs = 2, Arms = 3, None = 4};
-	public LimbType limbType = LimbType.Chest;
-	public BaseStats rootStats;
-	
-	public bool overrideMultiplier = false;
-	public float damageMultOverride = 1f;
-	
-	[HideInInspector] public float realDmgMult;
+    public enum LimbType { Head = 0, Chest = 1, Legs = 2, Arms = 3, None = 4 };
+    public LimbType limbType = LimbType.Chest;
+    public BaseStats rootStats;
+
+    public bool overrideMultiplier = false;
+    public float damageMultOverride = 1f;
+
+    [HideInInspector] public float realDmgMult;
     [HideInInspector] public float lastForceTime = 0f;
 
     private Vector3 _rv = Vector3.zero;
-    public Vector3 ragdollVelocity {
-        get {
+    public Vector3 ragdollVelocity
+    {
+        get
+        {
             return _rv;
         }
-        set {
+        set
+        {
             _ev = null;
             _rv = value;
             lastForceTime = Time.time;
@@ -40,31 +46,40 @@ public class Limb : MonoBehaviour {
     }
 
     private ExplosionVelocity _ev = null;
-    public ExplosionVelocity explosionVelocity {
-        get {
+    public ExplosionVelocity explosionVelocity
+    {
+        get
+        {
             return _ev;
         }
-        set {
+        set
+        {
             _rv = Vector3.zero;
             _ev = value;
             lastForceTime = Time.time;
         }
     }
-	
-	void Start() {
-		if(overrideMultiplier) {
-			realDmgMult = damageMultOverride;
-		}
-		else {
-			if(limbType == LimbType.Head) {
-				realDmgMult = 3f;
-			}
-			else if(limbType == LimbType.Chest) {
-				realDmgMult = 1f;
-			}
-			else {
-				realDmgMult = 0.7f;
-			}
-		}
-	}
+
+    void Start()
+    {
+        if (overrideMultiplier)
+        {
+            realDmgMult = damageMultOverride;
+        }
+        else
+        {
+            if (limbType == LimbType.Head)
+            {
+                realDmgMult = 3f;
+            }
+            else if (limbType == LimbType.Chest)
+            {
+                realDmgMult = 1f;
+            }
+            else
+            {
+                realDmgMult = 0.7f;
+            }
+        }
+    }
 }

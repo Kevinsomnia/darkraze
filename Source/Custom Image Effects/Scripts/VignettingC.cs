@@ -3,7 +3,8 @@ using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class VignettingC : PostEffectsBaseC {
+public class VignettingC : PostEffectsBaseC
+{
     public float intensity = 0.5f;
     public float chromaticAberration = 0.2f;
 
@@ -24,7 +25,8 @@ public class VignettingC : PostEffectsBaseC {
     public Shader chromAberrationShader;
     private Material chromAberrationMaterial;
 
-    public override bool CheckResources() {
+    public override bool CheckResources()
+    {
         CheckSupport(false);
 
         vignetteMaterial = CheckShaderAndCreateMaterial(vignetteShader, vignetteMaterial);
@@ -34,8 +36,10 @@ public class VignettingC : PostEffectsBaseC {
         return isSupported;
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if(!CheckResources()) {
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (!CheckResources())
+        {
             Graphics.Blit(source, destination);
             return;
         }
@@ -52,10 +56,12 @@ public class VignettingC : PostEffectsBaseC {
         RenderTexture color2a = null;
         RenderTexture color2b = null;
 
-        if(doPrepass) {
+        if (doPrepass)
+        {
             color = RenderTexture.GetTemporary(rtW, rtH, 0, source.format);
 
-            if(blur > 0f) {
+            if (blur > 0f)
+            {
                 color2a = RenderTexture.GetTemporary(rtW / 2, rtH / 2, 0, source.format);
 
                 Graphics.Blit(source, color2a, chromAberrationMaterial, 0);

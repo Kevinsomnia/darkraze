@@ -2,19 +2,25 @@
 using UnityEditor;
 using System.Collections;
 
-public class SpawnPointHelper : EditorWindow {
-    public enum SpawnTag {
+public class SpawnPointHelper : EditorWindow
+{
+    public enum SpawnTag
+    {
         RedSpawn = 0,
         BlueSpawn = 1,
         UnassignedSpawn = 2
     }
 
     private static GameObject _p;
-    public static GameObject preview {
-        get {
-            if(_p == null) {
+    public static GameObject preview
+    {
+        get
+        {
+            if (_p == null)
+            {
                 GameObject go = GameObject.Find("_overlay");
-                if(go != null) {
+                if (go != null)
+                {
                     DestroyImmediate(go);
                 }
 
@@ -35,11 +41,15 @@ public class SpawnPointHelper : EditorWindow {
     }
 
     private static GameObject _hit;
-    public static GameObject hitPoint {
-        get {
-            if(_hit == null) {
+    public static GameObject hitPoint
+    {
+        get
+        {
+            if (_hit == null)
+            {
                 GameObject go = GameObject.Find("_hit");
-                if(go != null) {
+                if (go != null)
+                {
                     DestroyImmediate(go);
                 }
 
@@ -65,13 +75,15 @@ public class SpawnPointHelper : EditorWindow {
     private static SpawnTag tagName = SpawnTag.RedSpawn;
 
     [MenuItem("Tools/Spawn Point Helper")]
-    public static void OpenWindow() {
+    public static void OpenWindow()
+    {
         EditorWindow.GetWindow(typeof(SpawnPointHelper));
         distance = EditorPrefs.GetFloat("SpawnDist", 1f);
         tagName = (SpawnTag)EditorPrefs.GetInt("SpawnTag", 0);
     }
 
-    void OnGUI() {
+    void OnGUI()
+    {
         GUILayout.Label("Spawn Point Helper Tool", EditorStyles.boldLabel);
 
         GUILayout.Space(10f);
@@ -84,15 +96,18 @@ public class SpawnPointHelper : EditorWindow {
         GUILayout.Space(10f);
 
         GUI.backgroundColor = new Color(1f, 0.2f, 0.1f, 1f);
-        if(GUILayout.Button("Set Spawn Position")) {
+        if (GUILayout.Button("Set Spawn Position"))
+        {
             Camera cam = SceneView.lastActiveSceneView.camera;
 
-            if(SceneView.lastActiveSceneView == null) {
+            if (SceneView.lastActiveSceneView == null)
+            {
                 return;
             }
 
             RaycastHit hit;
-            if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100f)) {
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100f))
+            {
                 Transform toParent = Selection.activeTransform;
 
                 GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -107,16 +122,20 @@ public class SpawnPointHelper : EditorWindow {
         }
     }
 
-    void Update() {
+    void Update()
+    {
         SceneView sv = SceneView.lastActiveSceneView;
 
-        if(sv != null) {
+        if (sv != null)
+        {
             RaycastHit hit;
-            if(Physics.Raycast(sv.camera.transform.position, sv.camera.transform.forward, out hit, 100f)) {
+            if (Physics.Raycast(sv.camera.transform.position, sv.camera.transform.forward, out hit, 100f))
+            {
                 preview.transform.position = hit.point + (hit.normal * distance);
                 hitPoint.transform.position = hit.point;
             }
-            else {
+            else
+            {
                 preview.transform.position = Vector3.down * 1000f;
                 hitPoint.transform.position = Vector3.down * 1000f;
             }
@@ -125,12 +144,15 @@ public class SpawnPointHelper : EditorWindow {
         Repaint();
     }
 
-    void OnDestroy() {
-        if(_p != null) {
+    void OnDestroy()
+    {
+        if (_p != null)
+        {
             DestroyImmediate(_p);
         }
 
-        if(_hit != null) {
+        if (_hit != null)
+        {
             DestroyImmediate(_hit);
         }
 

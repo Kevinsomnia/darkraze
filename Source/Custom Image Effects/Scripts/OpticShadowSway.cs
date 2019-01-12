@@ -2,8 +2,10 @@
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class OpticShadowSway : MonoBehaviour {
-    public static class ShaderProps {
+public class OpticShadowSway : MonoBehaviour
+{
+    public static class ShaderProps
+    {
         public static readonly int _Overlay = Shader.PropertyToID("_Overlay");
         public static readonly int _OverlayParams = Shader.PropertyToID("_OverlayParams");
         public static readonly int _ClampOffset = Shader.PropertyToID("_ClampOffset");
@@ -24,22 +26,26 @@ public class OpticShadowSway : MonoBehaviour {
 
     private Material overlayMaterial;
 
-    private void OnEnable() {
-        if(overlayShader == null || !overlayShader.isSupported) {
+    private void OnEnable()
+    {
+        if (overlayShader == null || !overlayShader.isSupported)
+        {
             enabled = false;
             return;
         }
-        
+
         overlayMaterial = new Material(overlayShader);
         overlayMaterial.hideFlags = HideFlags.HideAndDontSave;
     }
 
-    private void OnDisable() {
-        if(overlayMaterial != null)
+    private void OnDisable()
+    {
+        if (overlayMaterial != null)
             DestroyImmediate(overlayMaterial);
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         overlayMaterial.SetTexture(ShaderProps._Overlay, texture);
         overlayMaterial.SetVector(ShaderProps._OverlayParams, new Vector4(offsetAmount.x, offsetAmount.y, scale.x, scale.y));
         overlayMaterial.SetFloat(ShaderProps._ClampOffset, clampOffset);

@@ -3,13 +3,16 @@ using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class BloomAndFlares : PostEffectsBaseC {
-    public enum BloomScreenBlendMode {
+public class BloomAndFlares : PostEffectsBaseC
+{
+    public enum BloomScreenBlendMode
+    {
         Screen = 0,
         Additive = 1,
     }
 
-    public enum BloomQuality {
+    public enum BloomQuality
+    {
         Cheap = 0,
         Full = 1,
     }
@@ -42,7 +45,8 @@ public class BloomAndFlares : PostEffectsBaseC {
     private Material brightPassFilter;
     private Material lensFlare;
 
-    public override bool CheckResources() {
+    public override bool CheckResources()
+    {
         CheckSupport(false);
 
         screenBlend = CheckShaderAndCreateMaterial(screenBlendShader, screenBlend);
@@ -53,8 +57,10 @@ public class BloomAndFlares : PostEffectsBaseC {
         return isSupported;
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if(!CheckResources()) {
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (!CheckResources())
+        {
             Graphics.Blit(source, destination);
             return;
         }
@@ -70,15 +76,17 @@ public class BloomAndFlares : PostEffectsBaseC {
         RenderTexture quarterResDown = RenderTexture.GetTemporary(rtW4, rtH4, 0);
         RenderTexture halfResDown = RenderTexture.GetTemporary(rtW4, rtH4, 0);
 
-        if(quality > BloomQuality.Cheap) {
+        if (quality > BloomQuality.Cheap)
+        {
             Graphics.Blit(source, halfResDown, screenBlend, 2);
             RenderTexture rtDown4 = RenderTexture.GetTemporary(rtW4, rtH4, 0);
             Graphics.Blit(halfResDown, rtDown4, screenBlend, 2);
             Graphics.Blit(rtDown4, quarterResDown, screenBlend, 6);
             RenderTexture.ReleaseTemporary(rtDown4);
-            
+
         }
-        else {
+        else
+        {
             Graphics.Blit(source, halfResDown);
             Graphics.Blit(halfResDown, quarterResDown, screenBlend, 6);
         }
@@ -90,7 +98,8 @@ public class BloomAndFlares : PostEffectsBaseC {
 
         bloomBlurIterations = Mathf.Clamp(bloomBlurIterations, 1, 10);
 
-        for(int i = 0; i < bloomBlurIterations; i++) {
+        for (int i = 0; i < bloomBlurIterations; i++)
+        {
             float spreadForPass = (1f + (i * 0.25f)) * blurSpread;
 
             RenderTexture blur4 = RenderTexture.GetTemporary(rtW4, rtH4, 0);
@@ -105,26 +114,31 @@ public class BloomAndFlares : PostEffectsBaseC {
             RenderTexture.ReleaseTemporary(secondQuarterResDown);
             secondQuarterResDown = blur4;
 
-            if(quality > BloomQuality.Cheap) {
-                if(i == 0) {
+            if (quality > BloomQuality.Cheap)
+            {
+                if (i == 0)
+                {
                     Graphics.SetRenderTarget(quarterResDown);
                     GL.Clear(false, true, Color.black);
                     Graphics.Blit(secondQuarterResDown, quarterResDown);
                 }
-                else {
+                else
+                {
                     quarterResDown.MarkRestoreExpected();
                     Graphics.Blit(secondQuarterResDown, quarterResDown, screenBlend, 10);
                 }
             }
         }
 
-        if(quality > BloomQuality.Cheap) {
+        if (quality > BloomQuality.Cheap)
+        {
             Graphics.SetRenderTarget(secondQuarterResDown);
             GL.Clear(false, true, Color.black);
             Graphics.Blit(quarterResDown, secondQuarterResDown, screenBlend, 6);
         }
 
-        if(lensFlareIntensity > 0f) {
+        if (lensFlareIntensity > 0f)
+        {
             RenderTexture rtFlares4 = RenderTexture.GetTemporary(rtW4, rtH4, 0);
 
             float stretchWidth = ((float)hollyStretchWidth / widthOverHeight) * oneOverBaseSize;
@@ -149,7 +163,8 @@ public class BloomAndFlares : PostEffectsBaseC {
             rtFlares4.DiscardContents();
             Graphics.Blit(quarterResDown, rtFlares4, blurAndFlares, 1);
 
-            for(int i = 0; i < hollywoodFlareBlurIterations; i++) {
+            for (int i = 0; i < hollywoodFlareBlurIterations; i++)
+            {
                 stretchWidth = (hollyStretchWidth * 2f / widthOverHeight) * oneOverBaseSize;
 
                 blurAndFlares.SetVector("_Offsets", new Vector4(stretchWidth, 0.0f, 0.0f, 0.0f));
@@ -172,13 +187,15 @@ public class BloomAndFlares : PostEffectsBaseC {
         screenBlend.SetTexture("_GlareTexture", dirtTexture);
         screenBlend.SetFloat("_GlareIntensity", glareIntensity * 10f);
 
-        if(quality > BloomQuality.Cheap) {
+        if (quality > BloomQuality.Cheap)
+        {
             RenderTexture halfResUp = RenderTexture.GetTemporary(rtW2, rtH2, 0);
             Graphics.Blit(secondQuarterResDown, halfResUp);
             Graphics.Blit(halfResUp, destination, screenBlend, (int)screenBlendMode);
             RenderTexture.ReleaseTemporary(halfResUp);
         }
-        else {
+        else
+        {
             Graphics.Blit(secondQuarterResDown, destination, screenBlend, (int)screenBlendMode);
         }
 
@@ -186,13 +203,15 @@ public class BloomAndFlares : PostEffectsBaseC {
         RenderTexture.ReleaseTemporary(secondQuarterResDown);
     }
 
-    private void AddTo(float intensity, RenderTexture from, RenderTexture to) {
+    private void AddTo(float intensity, RenderTexture from, RenderTexture to)
+    {
         screenBlend.SetFloat("_Intensity", 1f);
         to.MarkRestoreExpected();
         Graphics.Blit(from, to, screenBlend, 9);
     }
 
-    private void BrightFilter(float threshold, RenderTexture from, RenderTexture to) {
+    private void BrightFilter(float threshold, RenderTexture from, RenderTexture to)
+    {
         brightPassFilter.SetFloat("_Threshhold", threshold);
         Graphics.Blit(from, to, brightPassFilter, 0);
     }

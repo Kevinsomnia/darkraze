@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SpectatorFollow : MonoBehaviour {
+public class SpectatorFollow : MonoBehaviour
+{
     public float rotationSpeed = 5f;
     public float positionDamp = 6f;
     public float rotationDamp = 16f;
@@ -13,29 +14,37 @@ public class SpectatorFollow : MonoBehaviour {
     public LayerMask layersToCheck = -1;
 
     private Transform _target = null;
-    public Transform target {
-        get {
+    public Transform target
+    {
+        get
+        {
             return _target;
         }
-        set {
+        set
+        {
             _target = value;
 
-            if(_target != value && value != null) {
+            if (_target != value && value != null)
+            {
                 targetPos = (startingPosition != Vector3.zero) ? startingPosition : (_target.position + offset);
             }
 
-            if(_target != null) {
+            if (_target != null)
+            {
                 startTime = Time.time;
             }
         }
     }
 
     private Vector3 startPos;
-    public Vector3 startingPosition {
-        get {
+    public Vector3 startingPosition
+    {
+        get
+        {
             return startPos;
         }
-        set {
+        set
+        {
             startPos = value;
             targetPos = startPos;
         }
@@ -63,7 +72,8 @@ public class SpectatorFollow : MonoBehaviour {
     private float oldTargetRot;
     private float curTargetRot;
 
-    void Start() {
+    void Start()
+    {
         tr = transform;
         rotX = tr.rotation.eulerAngles.y;
         rotY = tr.rotation.eulerAngles.x;
@@ -73,26 +83,32 @@ public class SpectatorFollow : MonoBehaviour {
         canOrbit = true;
     }
 
-    void Update() {
-        if(target == null) {
+    void Update()
+    {
+        if (target == null)
+        {
             return;
         }
 
         bool holdingRMB = true;
-        if(rotateUseRMB) {
+        if (rotateUseRMB)
+        {
             holdingRMB = Input.GetMouseButton(1);
         }
 
-        if(holdingRMB && canOrbit) {
+        if (holdingRMB && canOrbit)
+        {
             rotX += cInput.GetAxisRaw("Horizontal Look") * rotationSpeed;
             rotY += -cInput.GetAxisRaw("Vertical Look") * rotationSpeed;
             followRotFactor = Mathf.Lerp(followRotFactor, 0.5f, Time.deltaTime * 2f);
         }
-        else {
+        else
+        {
             followRotFactor = Mathf.Lerp(followRotFactor, 1f, Time.deltaTime * 2f);
         }
 
-        if(followRotation) {
+        if (followRotation)
+        {
             curTargetRot = target.rotation.eulerAngles.y;
             rotX += (curTargetRot - oldTargetRot) * followRotFactor;
             oldTargetRot = target.rotation.eulerAngles.y;
@@ -110,21 +126,26 @@ public class SpectatorFollow : MonoBehaviour {
         targetPos = Vector3.Lerp(targetPos, target.position + offset, Time.deltaTime * positionDamp * quickDamp);
 
         RaycastHit[] checkHit = Physics.RaycastAll(target.position + offset, (tr.position - (target.position + offset)).normalized, zoomDistance, layersToCheck.value);
-        if(checkHit.Length > 0) {
+        if (checkHit.Length > 0)
+        {
             float closestDist = zoomDistance;
-            for(int i = 0; i < checkHit.Length; i++) {
-                if(checkHit[i].collider.transform.root == target.root) {
+            for (int i = 0; i < checkHit.Length; i++)
+            {
+                if (checkHit[i].collider.transform.root == target.root)
+                {
                     continue;
                 }
 
-                if((checkHit[i].distance - 0.1f) < closestDist) {
+                if ((checkHit[i].distance - 0.1f) < closestDist)
+                {
                     closestDist = checkHit[i].distance - 0.1f;
                 }
             }
 
             targetDist = closestDist;
         }
-        else {
+        else
+        {
             targetDist = zoomDistance;
         }
 
