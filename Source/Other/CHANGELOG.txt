@@ -1,0 +1,506 @@
+######################################
+##### DARKRAZE PROJECT CHANGELOG #####
+########## Renegrad Studios ##########
+######################################
+
+------------------------------------------------------------
+
+[PRE-ALPHA] v.0.5.4a (Update #6)
+MAJOR UPDATE [92 changes were made since last update]
+ADD: Ragdoll prefab, and instantiation on player death for the local player.
+ADD: Created an automatic boundary system. If you are outside of the boundary (falling off the map), you will die instantly.
+ADD: New game mode: Free For All (Deathmatch). Every player you see besides yourself is an enemy. Reach the kill limit to win.
+ADD: Started to work on networked bot AI with pathfinding. This will fill up the slots to the player limit, and will be automatically replaced by a real player if there are no more slots left. You may change the amount and their preferences in the server settings. Able to participate in teams and multiple game modes and kill players and bots alike. They have simulated field of view and line of sight detection. Additionally, they will try to maintain recoil and spread, just like real players would.
+ADD: Animations to the player's shadow, not very fluid but the shadow is placeholder anyway, and shadows aren't entirely important as of now.
+ADD: Slight screen shake on ground impact.
+ADD: Kill assists. EXP distribution is based upon proportions, except for the killer.
+ADD: New voxel engine which is very similar to Minecraft. This will introduce some maps with destructible environments.
+ADD: New scope attachment (prototype-ish), name is undecided. It outlines enemies and other environment edges to make things more visible either in the night or daylight. One flaw is that you cannot distinguish enemies from allies, and it may not outline targets effectively due to camouflage or detection error.
+ADD: 3 new placeholder weapons (RPK, MP5-SD, and MP-412 REX), just to add a variety of weapons for upcoming alpha builds. This introduces new 'base' weapons for LMGs, SMGs and revolvers.
+ADD: Basic quick match functionality, which randomly selects a server from the server list. This will be improved in the future, but it works for now.
+ADD: Leveling system implemented. You will accumulate experience at the end of every round/match, and will level up accordingly.
+
+MOD: EMP now makes hit direction indicator less accurate.
+MOD: Added sorting to the server list. Sort by name, player count, game mode, etc...
+MOD: Improved anti-clip detection and smoothing.
+MOD: Added waiting for players text for the leaderboard.
+MOD: Muzzle flash now uses Alpha Blended shader instead of Additive shader to avoid overpowered brightness.
+MOD: Developer console now has auto-completion. You no longer have to type the entire string out to execute that command.
+MOD: Join button is disabled and a tool-tip will pop out when the server is full.
+MOD: Sprinting then jumping will allow you to fire your weapon once again.
+MOD: Your sprinting speed will gradually slow down when stamina is depleting.
+MOD: Improved accuracy of crouch detection.
+MOD: Drastically improved player physics. You affect rigidbodies on impact (momentum transfer), and your weight now shifts the center of mass.
+MOD: You are now able to cook grenades when quick throwing (by holding G or the quick throw grenade key).
+MOD: Increased reliability of listing players and bots in the leaderboard.
+MOD: Increased crosshair opacity and slightly improved texture.
+MOD: Bonus actions such as kill assists or headshots will be displayed in a smaller font size.
+MOD: You can now quickly cycle between grenade types by pressing "4" key multiple times. It will also give an notification of what is currently selected.
+MOD: Improved/added new sprites to the GUI atlas to improve visuals.
+MOD: Improved visual FX such as explosions from grenades.
+MOD: Major upgrade to the UI system, you can now highlight portions of text inside input fields, and support for advanced effects such as gradients.
+MOD: Recoil now has an influence pattern. This makes the recoil more predictable and more controllable. Also gives some weapons a distinct feel.
+MOD: Redesigned the scoreboard/leaderboard UI completely.
+MOD: Adjusted the pistol sprinting animation to lower the gun rather than raise it. It makes the animation more believable, and it's less distracting.
+MOD: Increased the kill limit range to 25 - 500 (previously 10 - 250).
+MOD: The spawn screen spectator cameras will now randomly cycle if it's idle.
+MOD: Draw animation now plays on spawn to match with the remote players.
+MOD: Made the news feed more bigger, since it was displaying too little content at a time.
+MOD: Reduced workload and bandwidth on send-to-self server messages/RPCs, since it is unnecessary to call these functions over the network if the source and destination are the same.
+MOD: Additional recoil will be added if firing the weapon for a extended duration of time. This should make it more essential to burst-fire at longer ranges.
+MOD: Increased movement acceleration and sprinting acceleration since it felt too sluggish.
+MOD: Improved pistol fire animations greatly, and extended the system with a variety of special parameters.
+MOD: Improved audio effects of the heartbeat and static sounds.
+MOD: Name tags will not display when the teammate is far away or not near the center of the screen to reduce UI clutter. Additionally, they will not display through zoomed scopes since render textures are not accounted for.
+MOD: Improved and updated breathing sound. As your stamina decreases, your breath rate and volume will increase, not just the volume.
+MOD: Footsteps will now avoid repeating the last played footstep, if possible. Additionally, the concrete footsteps have been improved slightly.
+MOD: Generally increased the muzzle velocity of all weapons slightly.
+MOD: Hit direction indicators will now ignore further indicators if all are from the same origin in a very short time period. Especially noticeable when hit by guns that shoot multiple bullets.
+MOD: Kill feed will now display the weapon name that the victim was killed by.
+MOD: Drawing animation now affects the camera.
+MOD: You cannot shoot your weapon while transitioning to aiming (sorry MLG quickscopers).
+MOD: Rewritten the login and registration system. This also means that you can finally login to the game, with your data stored online!
+MOD: Many UI elements and visuals have been adjusted to be more visible on darker monitors (this was a common complaint).
+MOD: Made bots more distinguishable in the lobby or the scoreboard, by making their clan tag use (parentheses) rather than [square brackets], and made the tint a different shade.
+MOD: The honeycomb shield texture will glow an orange color when the shields are damaged, and when recharging shields, it will glow blue. Also, it should be more noticeable since the opacity was too low.
+MOD: Modified the bullet tracer slightly, it now has a very slight variation in the texture, rather than it being a straight line, and it now tiles correctly.
+MOD: Improved the aiming animation to follow a curved movement pattern rather than linear.
+MOD: Created new weapon icons for all the weapons.
+MOD: Made EMP effect more effective by making the screen tear (intentionally) to act like the helmet is malfunctioning. This also makes it considerably harder to aim. Additionally, hearing will be impaired (low pass filter).
+MOD: Explosions will effect the camera using a new technique: radial blur and fish-eye distortion, and will impair hearing as well (low pass filter).
+MOD: Improved blood splatter particle texture and effects.
+MOD: Rounded the hit indicator rotation to the nearest 30th degree, so you can't pinpoint the exact location of where you're being hit from (general direction).
+MOD: Once again, many first person animations were improved in general.
+
+FIX: Highlighting system on the server list buttons now colors itself correctly.
+FIX: Fixed a minor bug in the grenade interpolation code.
+FIX: Fixed equipping the same weapon for primary and secondary would give you extra (separate) reserve ammo. Now it's being "shared" since they're using the same magazines.
+FIX: Carat display is now handled properly when the input component is disabled.
+FIX: Spectator camera will now start at the correct position, not from Vector3.zero.
+FIX: You will now automatically un-crouch (crouching caused some weird bug) when latching onto a ladder.
+FIX: Pressing space-bar while crouched under an object will make you stand up ignoring collision.
+FIX: Fixed a minor bug where the spectator camera will switch constantly when new player instances spawn.
+FIX: A few rigidbody-player collision bugs. Also platform check accuracy is improved.
+FIX: Bullet hole scale corrected after being pooled.
+FIX: Fixed many animation bugs dealing with quick throwing. The grenade type will properly switch when it runs out and quick throwing with grenades equipped is no longer possible.
+FIX: Teammate markers will now correctly destroy upon death.
+FIX: Minor bug that makes spectator camera poke through colliders and objects for a frame.
+FIX: Temporary reloading animation not playing with shotguns (or other singular reload weapons).
+FIX: Chromatic aberration shader not doing anything.
+FIX: Sun shafts auto-detecting the shaft source is now working properly.
+FIX: Assists and kill bonuses are now rewarded even when the player is dead (previously, you had to be alive to receive the assist bonus).
+FIX: Kill parsing is now more reliable, supports bot suicides, and uses a little bit less bandwidth.
+FIX: The distortion image effect's UV offset was not working properly.
+FIX: Cone of dispersion for weapons was incorrect when looking up vertically. This is now fixed.
+FIX: Being able to chat to a 'team' in Deathmatch or non-team based game modes.
+FIX: Muzzle smoke is now simulated in world space rather than local. It should also hide the ugly edges of the bullet smoke trail.
+FIX: After the EMP phase is complete, the weapon icon should no longer disappear. This is due to the UI system upgrade, but is now fixed.
+FIX: Interpolation for the trail controller to make it emit more consistently. Now rocket trails should display correctly even when in low frame-rates.
+FIX: Major rendering bug which would glitch out the UI and game view when using Deferred Rendering.
+
+DEL: Removed fake ambient occlusion underneath the player's feet, since they were causing artifacts.
+DEL: Removed the old shotgun model (EZR-29). Didn't look clean and was not futuristic anyway.
+DEL: Removed 'quit to desktop' from the in-game pause menu to prevent any networking problems and other gameplay issues. Now you must quit to the main menu before you can close the game.
+DEL: Removed hit markers, but a distinctive sound will still play to signal that you successfully damaged the target. 
+
+======================================================================
+
+[PRE-ALPHA] v.0.5.0f (Update #5)
+MAJOR UPDATE [240 changes were made since last update]
+ADD: Added the project to GIT repository to be shared between members (not really a in-game feature).
+ADD: Developer console. Used for developers to either demonstrate (in update videos) or aid in development.
+ADD: Pain sound based on volume and damage you take.
+ADD: Re-added the stamina bar, except more subtle.
+ADD: New sprinting animation (may still be improved in future).
+ADD: New weapon (RK44) sniper rifle.
+ADD: Sniper scope blur effect accomplished with vignetting and blur.
+ADD: Grenade system, throwing and tossing grenades. Switches back to weapon when you have no grenades.
+ADD: New grenades (frag, smoke, sticky).
+ADD: Semi-realistic pistol fire animation (again, done with scripts)
+ADD: Climbing ladders (including jumping off ladders with Spacebar)
+ADD: Crouching plays an animation and increases weapon accuracy slightly.
+ADD: Camera tilt/sway effect when moving or looking around.
+ADD: Fall damage sound (sound of breaking legs).
+ADD: Falling audio effect (rushing wind) based on y-velocity of player.
+ADD: New main menu music (placeholder).
+ADD: Impact animation depends on the impact velocity. Matches with fall animation.
+ADD: Many more options menu functionality (Mouse sensitivity, texture quality, etc). It can be changed in-game as well!
+ADD: Added variable scope (control magnification by scrolling mouse wheel or middle mouse press)
+ADD: Flinching when being damaged, it may mess up your aim when being shot at.
+ADD: Re-added the player legs with animations.
+ADD: Capped the FPS to 60 to avoid extremely fast frame-rates and screen tearing.
+ADD: Zombie breathing sound to let you know that a threat is near.
+ADD: New wave sound.
+ADD: Zombie bite sound to let you know you're getting attacked.
+ADD: MULTIPLAYER!! NAT Punchthrough and PHP NAT Facilitator combined with a PHP master server makes it possible. Using a custom framework named Topan Networking. Killing/dying and chat implemented in the game.
+ADD: Server list (with help of PHP master server) that lists all server info with refresh button.
+ADD: Leaderboard with kills, deaths, K/D, headshots, and your current rank (WIP)
+ADD: Added a new NR-94 assault rifle.
+ADD: Added Weapon ID and Grenade ID System for use in Multiplayer and many other functions.
+ADD: Hosting servers with an awesome GUI menu.
+ADD: Map selection implemented so you can host games with the map you choose.
+ADD: Server game lobby (chat, change map, vote, etc.).
+ADD: Underwater effect (fog, blur, sound effects). Not shown in the update video.
+ADD: Custom input/control mapping implemented.
+ADD: Hover vehicle physics, used for hovercrafts. Runs entirely on the PhysX engine.
+ADD: Networked rigidbodies/physics (needs some fixes).
+ADD: New enemy (spider beast), explodes when it dies (5 damage). The explosion radius is really low so there is barely any fear from dying from it. The only annoying thing about it, is that it resets shield regeneration timer and leaves you vulnerable.
+ADD: Jumping now has a grunting sound and drains stamina.
+ADD: Objectives marker system for singleplayer and multiplayer.
+ADD: Topan Map Editor. Inspired by the Unity Editor interface, this makes creating maps easy. Includes its own scripting and shader engine. Imports many model formats including .x and .blend files. Can also import textures.
+ADD: Body part damage (HEADSHOT: 300% damage || Chest: 100% damage || Arms/Legs: 70% damage).
+ADD: Introduced bullet/laser casing ejection. Also works and syncs in multiplayer.
+ADD: Re-implemented dynamic crosshairs that actually sync with the weapon spread (can change style in settings).
+ADD: Spectating camera with the ability to follow a player, or just roam around (roaming is being worked on). Smart detection so the camera won't go through objects.
+ADD: Infinite Procedural Voxel Terrain, syncs across the network. (still WIP)
+ADD: ACOG Scope (thanks to Laxman130). Second real attachment in game.
+ADD: Chambers an extra bullet if you didn't fire all bullets in last reload.
+ADD: When damaged, the health/shield text flashes red for a moment and impulses the size (including all other value changes)
+ADD: Improved jumping/falling animation, once again, this is scripted as well.
+ADD: Sprinting animation override, this makes the sprinting animation unique (if wanted) for every weapon. Pistols have a different animation than assault rifles.
+ADD: New custom level loader with GUI. When loading multiplayer maps, it will show a "preview" screenshot and describes the map history, setting, etc. (WIP)
+ADD: New placeholder weapons (TEC-9, EZR-29).
+ADD: Bullets now leave a slightly visible smoke/gunpowder trail.
+ADD: Settings can now be changed and applied in-game
+ADD: Wet Surface Shader (with realtime reflections).
+ADD: Impact sound effect dependent on the impact magnitude. (used for grenade bounce)
+ADD: Dropping your current weapon (by pressing G).
+ADD: Camera shake when there is an explosion (or something else).
+ADD: Weight of the equipped weapons (including the inventory) will affect the player speed, player look, weapon draw time, and the rate of stamina depletion when sprinting.
+ADD: Low pass filter added when health is below 25%.
+ADD: Progressive reloading for shotgun. You may stop the reloading at any time by pressing R or just simply clicking.
+ADD: Idle animation for the camera, sways around randomly.
+ADD: Character shadow from first person using a transparent shadow-casting shader (still WIP).
+ADD: Camera and GUI shakes from recoil to give an immersive effect.
+ADD: Re-added the sprinting FOV effect, but less noticeable.
+ADD: New small training map, instead of a flat terrain.
+ADD: Low shield alarm, served as a reminder to take cover.
+ADD: Notification system, dynamically called from script. Will be used as kill notifications in multiplayer.
+ADD: Vignetting effect is synced with heartbeat (when low on health).
+ADD: Custom mouse cursor to give a better feel than the default cursor.
+ADD: Can no longer exit the game with ALT-F4; force quitting will cause more problems than it will to solve.
+ADD: Shuffling equipment sound effect when moving, including running, sprinting, jumping, crouching, aiming, and much more. Louder when sprinting (main purpose of why I added it). Synced across the network.
+ADD: Sharp blur of vision when being damaged, will quickly subside. Intensity correlates with damage.
+ADD: Accounts are now added. You can login and save your stats. Registration is through a website.
+ADD: Idle swaying will increase when you are exhausted (low in stamina).
+ADD: When low on health, your HUD will start to flicker and distort.
+ADD: Added a new melee system (WIP) with a new weapon (plasma knife, thanks to Beanster).
+ADD: Shooting will slow down movement very slightly due to recoil and concentration (7.5% slower).
+ADD: Player cannot shoot within 0.5 seconds of his spawn time in case of accidental fire.
+ADD: Created a new custom object/particle pooling system for performance. Allows to save GC Allocations and overall CPU usage when instantiating.
+ADD: Fall damage will replenish 25% more quickly, but still leaves you very vulnerable and the regeneration delay will still be the same. You can also still die from it.
+ADD: Advanced kill-feed display is fully dynamic and is implemented to use in multiplayer.
+ADD: Introduced subtle hit confirmation sound. There is no visual representation. This can be toggled through the audio menu.
+ADD: Noise and distortion overlay for the helmet visor when extremely low on health.
+ADD: Being damaged will now make you breathe heavily (based on damage) temporarily.
+ADD: When shields are damaged, a visual indicator (honeycomb shield effect) will pulse and play a electro-static sound.
+ADD: Being hit by bullets (or anything that enables blood screen) will play a bullet impact sound.
+ADD: You can now run a bit faster when holding down shift (sprint) while reloading.
+ADD: All grenade types, either tossing or throwing, are synced over network.
+ADD: Edge influence now prevents "floating" over a ledge and will cause you to slip (simulated foot placement).
+ADD: You can now slightly re-position yourself while in air.
+ADD: Players will move according to moving platform's velocity, such as elevators and other similar moving objects.
+ADD: New holographic and reflex lens system/shader.
+ADD: Gamma correction/adjustment to be compatible with more displays.
+ADD: Game modes have different conditions that must be met to count as a victory. Can be changed when creating a server.
+ADD: User is now able to send bug reports or feedback to developers.
+ADD: Added a new launcher weapon using extended gun controller which now supports projectiles (rockets, grenades, etc).
+ADD: Rocket system with 'flight randomness' and gravity.
+ADD: Some weapons, such as rocket launchers, are capable of reloading on weapon click. Mainly to avoid producing a "dry fire" sound, and it's more sensible to have it this way.
+ADD: Server availability system. First checks for web response (for internet connection and server failure), then uses ping for response time.
+ADD: Background distorted noise when low on health, also matches well with the image effects.
+ADD: Bullet fly-by sound effects to give presence of bullets more noticeable.
+ADD: Decal system to greatly improve detail of scene.
+ADD: A new particle trail controller system, to overcome certain problems with the particles.
+ADD: Explosives system can support detonatable explosives, such as C4.
+ADD: New helmet texture overlay for HUD (thanks to Danny for creating the base layout!)
+ADD: Gamma correction test window, to further determine the "perfect" gamma.
+ADD: Random sniper scope sway, when aiming down sights, to make aiming harder. Hold the shift (or sprint) key, to stabilize aim.
+ADD: Smooth fading transition when lobby countdown is initialized.
+ADD: Rain splash effect on visor when looking up.
+ADD: New animation when you are falling at terminal velocity. Camera and arms will start to shake, and you cannot fire your weapon.
+ADD: Weapon-specific depth of field shader. Blurs the foreground of the weapon when aiming.
+ADD: Certain amount of people must spawn to start the match.
+ADD: New support for team chat, to send messages to your team only.
+ADD: Initialization sound for players when spawning.
+ADD: Scope shadow parallax effect.
+ADD: Reloading an empty magazine will extend reload time.
+ADD: Team auto-balance for the match. You are also able to switch teams, if that option is available.
+ADD: Speed-hack protection which will automatically quit the application if the game speed is higher than usual, extremely accurate!
+ADD: Moderator tools for the server to ban/kick players.
+ADD: Round system, where it doesn't return to lobby after every match. Rounds per match can be specified in the server settings.
+ADD: Early blood splatter system, which randomly creates blood decals when a player is injured.
+ADD: Bullets with a ricochet parameter. The bullets get slower with every ricochet.
+ADD: Spawn protection to prevent "spawn camping" (3 second delay)
+ADD: Added a basic, yet effective, variable protection system. Able to protect the following: (Integers, Floats, Vector3, and Quaternions).
+ADD: Ping limit for servers, auto-kicks if greater than the threshold for at least 5 consecutive seconds.
+ADD: Hit indicator to tell which direction you took damage from.
+ADD: An assignable (server setting) idle timer which automatically kicks inactive players.
+ADD: Quick throwing grenade using G. Effective if you want to throw one grenade.
+ADD: EMP grenade disables shields and distorts HUD information.
+ADD: Added a very simple version check. If the version of the build is not the latest, multiplayer will not be available.
+ADD: Created a news feed at the main menu to provide the user with information about server maintenance or upcoming updates.
+
+MOD: Updated to Unity 4.5.3 for many overall optimization and fixes.
+MOD: Vignetting is more optimized now (thanks to willywill)
+MOD: Skydome is optimized by removing unnecessary features in the shader (25% performance boost).
+MOD: Changed the main menu background scenery and overhauled GUI layouts and appearance.
+MOD: Crouching is now changed to toggle instead of holding button.
+MOD: Major script improvements/rewritten
+MOD: Fall animation has been rewritten and improved.
+MOD: Made many changes to gameplay and visuals to make it feel more "natural".
+MOD: Made the breathing sound synchronize with stamina
+MOD: Made the pause menu look more visually appealing.
+MOD: Optimized the bullet script by more than 250%.
+MOD: Aiming now slows down mouse movement.
+MOD: Changed bullet tracer to become a little more visible (uses mesh instead of particle system).
+MOD: Improved aiming/zooming animation.
+MOD: Made the death function only update when being damaged. This way, it will make the ragdoll animation become more fluid and seamless.
+MOD: Changed bullet impact sounds
+MOD: Improved dynamic gun movement.
+MOD: Smoothed out the bobbing animation and improved it.
+MOD: Made the recoil animation smoother, responsive, and natural. Also added slight horizontal and vertical kick. (all movement done with coding)
+MOD: MANY MAJOR optimizations in the scripts! (240-325 FPS on Intel i5 (scripts only), previously 150-210 FPS).
+MOD: Optimizations in the networking framework and new compression methods.
+MOD: Rewrote the Weapon Manager script to instantiate the weapons in inventory automatically. Pressing 0 will switch to hands.
+MOD: Corrected fire rate to be consistent regardless of frame-rate.
+MOD: Aiming now has a anti-spam system so it won't look "jerky" or "glitchy".
+MOD: Optimized and improved detail of bullet "hit particles".
+MOD: Slightly improved footstep sounds and gun fire sounds.
+MOD: Improved bloody screen texture once again.
+MOD: Anti-clip system is now more accurate by casting two rays instead of one.
+MOD: Crouching and walking is now faster (1 meter per second increase)
+MOD: The player can't switch weapons until he fully draws out the weapon he's switching to.
+MOD: Anti-spam sprinting. Added a cooldown for the "sprint" key so then the animation won't look weird.
+MOD: You can now switch weapons even when in mid-air.
+MOD: Made the mouse look script much more responsive and optimized.
+MOD: Stamina recharge rate is now dependent on the movement speed. Standing still will make your stamina recharge the fastest.
+MOD: Rewritten "use object" system, it's a lot smarter and causes less problems than before
+MOD: Fall damage now slows down movement speed temporarily. It also has a limping animation for the camera.
+MOD: Made the death ragdoll much more realistic and random. It also inherits the velocity of their movement. Previously, it looked VERY static and unrealistic every time it died.
+MOD: Made many coding animations consistent with the frame-rate.
+MOD: You can now sprint diagonally for maneuverability, but at a slower rate.
+MOD: Camera upward kick and GUI shake creates a more immersive environment to the player.
+MOD: Dynamic movement now depends on the rotation velocity rather than the input.
+MOD: Aiming now slows the player down slightly, depending on how heavy the weapon is (for example: aiming with pistols won't affect as much as assault rifles).
+MOD: Crouching is much more responsive and quicker.
+MOD: Anti-clip system is much smoother, and includes positional updates as well.
+MOD: Health regeneration dramatically slows down as you recuperate health.
+MOD: Many adjustments to weapon accuracy and other factors.
+MOD: Jumping adds a slight force to the current perpendicular slope.
+MOD: Running up steeper slopes will drain a extra stamina and slightly reduce recovery rate.
+MOD: Movement speed will be slightly reduced during an impact (from any height).
+MOD: Changing the time-scale of the game will also change the physics update interval (time-step). This causes rigidbodies to appear smoother during "slow-motion".
+MOD: Pressing space-bar (or jump key) while crouching will make you stand up.
+MOD: Allowed editing of server settings while in lobby (for host only).
+MOD: Crouch detection to see if there is anything above player before standing up.
+MOD: Acceleration and deceleration of speed when toggling sprint.
+MOD: Now using Update instead of FixedUpdate to fire the weapon to save on performance. This also means that fire rate will no longer be consistent when at extremely low frame rates.
+MOD: Rewritten the player movement script from scratch, now the movement appears much smoother and has less collision glitches.
+MOD: Getting hurt will temporarily reduce stamina regeneration.
+MOD: Now weapon accuracy selects random point within a circle, instead of a square. This will lead to a more natural "cone of fire".
+MOD: Aim mouse sensitivity now decreases accordingly to the scope (if there is one) magnification.
+MOD: Added fake and subtle ambient occlusion near the feet.
+MOD: New glowing effect added to tracers and muzzle flash.
+MOD: Aiming shifts the weapon position instead of the camera position.
+MOD: Revised image effect values to have a balance between visual quality and playability.
+MOD: Added many animation curves to improve coded animations drastically, looking more fluid and professional than ever.
+MOD: Sprint rotation will snap more quickly to the aim position/rotation when aiming.
+MOD: Corrected the player movement speed to more realistic proportions.
+MOD: Leaderboard is now sorted based upon the highest score.
+MOD: Leaderboard will now highlight your name, so it's easier to track your progress/position.
+MOD: Switching weapons will now always override and cancel reloading.
+MOD: Scroll-wheel is now supported for switching weapons.
+MOD: Default vertical FOV is now 65. The weapon position will change according to the FOV to reduce distortion.
+MOD: You can no longer chat without at least one valid character in the input.
+MOD: Bullets now have a damage falloff depending on the weapon, allowing for certain weapons to have different effective ranges.
+MOD: Bullet holes now glow for a while on impact, making the burn marks more plausible.
+MOD: Reduced the connection timeout in multiplayer.
+MOD: Drastically improved handling of closing servers on the master server.
+
+FIX: Restrictions now update every frame rather than button click, this fixes the glitch with weapons not firing.
+FIX: Decomposing shader now works properly!
+FIX: Training map glitches and errors.
+FIX: Turret AI now detects player and will fire once in sight.
+FIX: Grenades (and other rigidbodies) will not go through objects at fast speeds.
+FIX: Weapon sometimes not show up when getting off ladder
+FIX: Footsteps now change correctly and accurately.
+FIX: Glitches with the switching weapon animation.
+FIX: Semi-auto weapons will not miss input anymore (queued fire).
+FIX: Sliding sometimes doesn't work (due to raycast), so it has a secondary check.
+FIX: Hitting your head (via jumping), will cause you to stop floating.
+FIX: Pausing game now actually pauses/stops the audio (only in single-player).
+FIX: You cannot switch weapons while reloading, otherwise the sound would glitch and not play.
+FIX: Fixed some glitches inside the switching animations.
+FIX: Some bugs and glitches with picking up weapons.
+FIX: A dynamic movement gun problem when facing very low time-scale values.
+FIX: The bloody GUI screen will now desaturate properly according to health.
+FIX: Many issues with player movement and collision problems
+FIX: Muzzle light now fades and renders correctly (previously rendered for one frame).
+FIX: Work-around for issues with GUI depth (mostly within chatboxes).
+FIX: Disconnection of server now properly closes the instance within the master server.
+
+EDITOR: Added a weapon icon generator that speeds up the process by a lot and is only a few simple clicks to generate. You still have to use Photoshop to invert the color (to white) and add a glow effect.
+EDITOR: Added a weapon ID controller to show which ID's are which and also assigning ID's.
+EDITOR: Added a grenade ID controller to show which ID's are which and also assigning ID's.
+EDITOR: Improved inspector GUI for organization and workflow.
+
+DEL: Shop system
+DEL: ACR since it is replaced with NR-94.
+DEL: Bullet penetration.
+DEL: Ammo manager, as it will cause problems in the future, and for convenience.
+DEL: Zoom delay when aiming.
+
+- Countless minor modifications, adjustments, and balancing that aren't on this list.
+
+======================================================================
+
+[DEVELOPMENT] v.0.2.0a (Update #4)
+MAJOR UPDATE [60 changes were made since last update]
+ADD: Overhauled graphics of main menu!
+ADD: Login/register menu for multiplayer (not working at the moment).
+ADD: Added slight zoom in when aiming sights and a delay.
+ADD: Aiming blurs the corners of the screen so your player focuses in the middle.
+ADD: Made a damage effect (slight chromatic abberation)
+ADD: Controls disabled when menu is open
+ADD: GUI sway when looking around.
+ADD: Day and night cycle (really beautiful). [NOT IN VIDEO]
+ADD: Shield bar and shield system. Shield regenerates more quickly than health could. (4 shield points a second, 7 second delay) / (1 health point per 4 seconds, 10 second delay)
+ADD: Changing screen resolution in options menu (Finally).
+ADD: Waves system that calculates the time by how many enemies there are in the wave. Be sure to plan out for the next wave in your spare time!
+ADD: GUI that tells how many enemies left for current wave.
+ADD: Destruction system (better).
+ADD: Anti-clip system (similar to FPS Kit)
+ADD: Idle animation (camera and arms)
+ADD: Added a lock cursor since it is annoying to see the mouse.
+ADD: New futuristic assault rifle modeled by Alessandro :d (not a team member).
+ADD: Shop system, buying weapons, selling weapons, and buying ammo.
+ADD: Zombies now "disintegrate" when it reaches a timer to save performance.
+ADD: New laser bullet effect. (Can't see in video)
+ADD: New intro, realtime cinematic. There is an option to skip it (Esc)
+ADD: No weapons mode, happens when you have no primary or secondary.
+ADD: GUI movement (similar to dynamic movement)
+ADD: Money gain/loss animation.
+ADD: Shop items can heal you and supply you with ammo and weapons
+ADD: After each wave, the enemies will get harder (health, damage, and value)
+ADD: Ambient breathing sound
+ADD: Death animation and player respawning.
+
+MOD: Improved GUI transitions.
+MOD: Changed main menu look to pivot around center of the screen
+MOD: New mouse smoothing method (was using Mathf.Lerp).
+MOD: Changed the GUI to 3D and overhauled the overall look!
+MOD: Performance and MANY bug fixes.
+MOD: Cannot sprint while reloading and cannot reload when sprinting.
+MOD: Improved the blood texture.
+MOD: Changed the AI system to be more responsive.
+MOD: Changed the bullet hole texture to a burnt look.
+MOD: Scripts were reverted back to the old character system (full character didn't look good and it also made it easier for the animator)
+MOD: Footsteps are now louder (i was stupid and compared footstep sounds to how i run but i remember that soldiers have boots :facepalm:)
+MOD: New weapon sway script and weapon bob.
+MOD: Increased zombie walking animation speed
+MOD: Reduced the drawing time when switching weapons
+MOD: Combined level meshes and reduced draw calls by half!
+MOD: You can no longer pick up the same weapon that you equipped.
+MOD: Synced the weapon bob to match up with player speed.
+MOD: Blood texture is not synced with health, now it bases off of damage and fades away over time regardless of health.
+MOD: Ammo can now be shared between weapons as calibers, not shared per weapon.
+MOD: Now pause menu will stop time. However, shop menu will not stop time.
+MOD: Spawning is now randomized (not spawning at one point)
+MOD: Shader bug that causes slow computers to run slow
+
+FIX: Training level won't pause.
+FIX: Dead bodies float when killed.
+FIX: Collider issues on floor in survival map.
+FIX: Zombies killing each other.
+FIX: Major bug where secondary weapon won't be assigned.
+
+DEL: Sprinting animation. I will remake it in the next update.
+DEL: Sprinting FOV effect.
+DEL: Full character system.
+DEL: Crosshairs, now you have to rely more on aiming and attachments. This also means that I have removed hit markers as well.
+DEL: Targeting system.
+
+======================================================================
+
+[DEVELOPMENT] v.0.0.9 (Update #3)
+[21 major changes were made since last update]
+ADD: Zombie AI with pathfinding.
+ADD: Bullet drop added to the bullet physics system.
+ADD: Hit markers now appear when you hit an enemy.
+ADD: Zombies will attack when within range.
+ADD: Ammo bar (acts as the background of the weapon panel as well)
+ADD: Targetting enemies (WIP)
+ADD: Enemy health with death.
+ADD: Flashlight can be toggled with F.
+ADD: Bloody screen effect based on the current health.
+ADD: Thruster/booster that changes the player velocity. Great for transportation!
+ADD: Money system (WIP)
+ADD: Spawning system (WIP)
+ADD: Some particles can damage or heal you.
+ADD: "Killed by" message on death.
+
+MOD: Minimap now has an arrow for the player.
+MOD: Decreased the opacity of the crosshairs.
+MOD: Changed the gun sounds.
+MOD: Changed the pause screen UI layout.
+MOD: Decreased gravity amount (7.34 m/s^2) and fall damage (futuristic planet setting)
+MOD: Changed font of UI to a futuristic theme.
+
+FIX: Some weapon pickup issues.
+
+======================================================================
+
+[DEVELOPMENT] v.0.0.5 (Update #2)
+[31 major changes were made since last update]
+ADD: Quit button. Who wouldn't forget that...
+ADD: Vignetting and desaturation effects when low on health
+ADD: Health system with regeneration has been implemented for player
+ADD: Player can seamlessly become a ragdoll without instantiating.
+ADD: Basic turret AI.
+ADD: Dynamic crosshair.
+ADD: Fall damage depending on impact speed.
+ADD: Basic kickback/recoil system from scripts
+ADD: Muzzle flash and light effect when shooting.
+ADD: Added a maximum ammo cap so that you cannot hold infinite amounts of ammo.
+ADD: Aiming down sights affect the bullet spread (inaccuracy).
+ADD: Weapon manager and switching weapons with numeric buttons (1, 2, 3, 4).
+ADD: New placeholder weapons added (M4A1, G36C, Beretta 92).
+ADD: New map added, Zombie Survival, WIP.
+ADD: Dry fire sound when no more bullets in current magazine.
+ADD: Q to switch fire modes.
+ADD: In-game menu by pressing the Escape key. Also pauses the game.
+ADD: Added stamina for sprinting.
+ADD: Heartbeat sound effect when health is low.
+ADD: Minimap (WIP).
+ADD: Picking up weapons from ground
+ADD: Falling animation (using scripts once again)
+ADD: Pressing the Alt key will toggle walking.
+ADD: Barrel (with object health system) and explosions!
+
+MOD: Updated HUD skin by a decent amount.
+MOD: Improved training map.
+MOD: Changed the bobbing speed and amount to more realistic settings.
+MOD: Adjusted the crouching height.
+MOD: Changed the main menu to a 2D perspective.
+
+DEL: Bullet penetration because it was too glitchy to function properly.
+
+======================================================================
+
+[DEVELOPMENT] v.0.0.2 (Update #1)
+[14 major features were implemented]
+ADD: Basic player movement
+ADD: Awesome main menu
+ADD: Smart player mouse look
+ADD: Full character system, dynamic shadows affecting player
+ADD: Weapon and camera bob (improved from old project)
+ADD: Weapon sway (dynamic movement)
+ADD: Player footsteps based on controller velocity
+ADD: New shooting system. Rewritten from scratch from old project.
+ADD: New placeholder weapon added (AK47)
+ADD: Basic player animations
+ADD: Advanced GUI/HUD System with Basic GUI (ammo counter, health bar, panels, etc).
+ADD: Player can now interact with rigidbodies (physics object).
+ADD: Basic bullet physics (trajectory, bullet penetration).
+ADD: Player can now crouch using the control button.

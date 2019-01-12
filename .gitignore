@@ -1,0 +1,22 @@
+Library/
+Temp/
+obj/
+Server Files/
+Bolt_DebugStart_Build/
+.uEcho/
+*.vs
+*.svd
+*.pidb
+*.booproj
+*.unityproj
+*.sln
+*.db
+*.suo
+*.csproj
+*.booproj
+*.stackdump
+*.pre
+*.blend1
+*.blend1.meta
+*.meta_orig
+*.meta_orig.meta
